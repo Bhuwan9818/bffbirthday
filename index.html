@@ -1,0 +1,1117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Happy Birthday, Best Friend! 🎉 | VIP Birthday Vault</title>
+  <meta name="description" content="A unique, hyper-interactive birthday celebration experience with a ₹500 Gift Vault, secret dev terminal, games, and memories!" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;600;700&family=Outfit:wght@300;400;600;700;800;900&family=Pacifico&family=Dancing+Script:wght@700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- Custom Cursor -->
+  <div class="cursor" id="cursor"></div>
+  <div class="cursor-follower" id="cursorFollower"></div>
+
+  <!-- Canvas for stars & confetti -->
+  <canvas id="bgCanvas"></canvas>
+
+  <!-- Sound Toggle Float Button -->
+  <button class="audio-toggle-btn" id="audioToggle" title="Toggle Sound FX & Audio" aria-label="Toggle Sound">
+    <span id="audioIcon">🔊</span>
+    <span class="audio-label">SFX: ON</span>
+  </button>
+
+  <!-- ==================== TOP NAVIGATION ==================== -->
+  <nav id="navbar">
+    <div class="nav-logo" onclick="window.scrollTo({top:0, behavior:'smooth'})">
+      <span class="logo-icon">🎂</span>
+      <span class="logo-text">BFF<span class="accent">.OS</span> <span class="version-badge">v2.4</span></span>
+    </div>
+    
+    <ul class="nav-links" id="navLinks">
+      <li><a href="#hero" data-step="1">Home</a></li>
+      <li><a href="#cake" data-step="2">Candle 🔒</a></li>
+      <li><a href="#games" data-step="3">Arcade 🔒</a></li>
+      <li><a href="#gifts" class="nav-gift-link" data-step="4">🎁 Gift Store 🔒 <span class="budget-pill" id="navBudgetPill">₹500 Left</span></a></li>
+      <li><a href="#coupons" data-step="5">VIP Perks 🔒</a></li>
+      <li><a href="#memories" data-step="6">Memories 🔒</a></li>
+      <li><a href="#devcompliments" data-step="7">AI Roast 🔒</a></li>
+      <li><a href="#wish" data-step="8">Wish 🔒</a></li>
+    </ul>
+
+    <div class="nav-actions">
+      <!-- Cart Trigger -->
+      <button class="cart-btn" id="cartBtn" aria-label="Open Gift Cart">
+        <span>🛍️</span>
+        <span class="cart-count" id="cartCountBadge">0</span>
+      </button>
+      
+      <!-- Terminal Toggle Button -->
+      <button class="terminal-nav-btn" id="terminalToggleBtn" title="Open BFF Developer Terminal (Press ~)">
+        <code>~_ dev_cli</code>
+      </button>
+
+      <!-- Mobile Hamburger -->
+      <div class="hamburger" id="hamburger" aria-label="Toggle Menu">
+        <span></span><span></span><span></span>
+      </div>
+    </div>
+  </nav>
+
+  <!-- 12-Hour Gift Selection Countdown Timer Banner (Activates when user starts timer or decides later) -->
+  <div id="storeCountdownBanner" class="store-countdown-banner hidden">
+    <div class="timer-banner-inner">
+      <span class="timer-icon">⏳</span>
+      <span class="timer-title">12h Gift Vault Countdown:</span>
+      <span id="countdownTimerVal" class="timer-digits">12:00:00</span>
+      <span class="timer-sub-text">Auto-picks after 12h</span>
+      <button class="btn btn-primary btn-sm timer-jump-btn" onclick="navigateToStep(4)">
+        <span>🛍️ Open Vault</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- ==================== INTERACTIVE JOURNEY PROGRESSION BAR ==================== -->
+  <div id="journeyTracker" class="journey-tracker-bar">
+    <div class="journey-tracker-inner">
+      <div class="journey-meta-row">
+        <div class="journey-meta-left">
+          <span class="journey-badge-pill">🎂 Birthday Quest</span>
+          <span class="journey-current-label" id="journeyCurrentStepName">Step 1: Welcome Home</span>
+        </div>
+        <div class="journey-meta-right">
+          <span class="journey-progress-pct" id="journeyProgressPct">12% Completed</span>
+          <span class="journey-nav-hint">⚡ Click any unlocked step to jump</span>
+        </div>
+      </div>
+      
+      <div class="journey-stepper-wrapper">
+        <div class="journey-line-track">
+          <div class="journey-line-fill" id="journeyLineFill" style="width: 0%;"></div>
+        </div>
+        
+        <div class="journey-steps-list" id="journeyStepsList">
+          <button class="journey-step-btn active" data-step="1" onclick="navigateToStep(1)" title="Step 1: Welcome & Birthday Stats">
+            <span class="step-num-bubble">1</span>
+            <span class="step-btn-content">
+              <span class="step-icon">🎈</span>
+              <span class="step-name">Home</span>
+            </span>
+            <span class="step-status-chip">Active</span>
+          </button>
+          
+          <button class="journey-step-btn locked" data-step="2" onclick="navigateToStep(2)" title="Step 2: Interactive Cake & Candle Ritual">
+            <span class="step-num-bubble">2</span>
+            <span class="step-btn-content">
+              <span class="step-icon">🎂</span>
+              <span class="step-name">Candle</span>
+            </span>
+            <span class="step-status-chip">🔒</span>
+          </button>
+
+          <button class="journey-step-btn locked" data-step="3" onclick="navigateToStep(3)" title="Step 3: 3-Level Birthday Arcade">
+            <span class="step-num-bubble">3</span>
+            <span class="step-btn-content">
+              <span class="step-icon">🕹️</span>
+              <span class="step-name">Arcade</span>
+            </span>
+            <span class="step-status-chip">🔒</span>
+          </button>
+
+          <button class="journey-step-btn locked" data-step="4" onclick="navigateToStep(4)" title="Step 4: ₹500 Birthday Gift Vault">
+            <span class="step-num-bubble">4</span>
+            <span class="step-btn-content">
+              <span class="step-icon">🎁</span>
+              <span class="step-name">Gift Vault</span>
+            </span>
+            <span class="step-status-chip" id="step4ProgressChip">🔒</span>
+          </button>
+
+          <button class="journey-step-btn locked" data-step="5" onclick="navigateToStep(5)" title="Step 5: Scratch & Win VIP Perks">
+            <span class="step-num-bubble">5</span>
+            <span class="step-btn-content">
+              <span class="step-icon">🎟️</span>
+              <span class="step-name">VIP Perks</span>
+            </span>
+            <span class="step-status-chip">🔒</span>
+          </button>
+
+          <button class="journey-step-btn locked" data-step="6" onclick="navigateToStep(6)" title="Step 6: Time Capsule & Memories">
+            <span class="step-num-bubble">6</span>
+            <span class="step-btn-content">
+              <span class="step-icon">📸</span>
+              <span class="step-name">Memories</span>
+            </span>
+            <span class="step-status-chip">🔒</span>
+          </button>
+
+          <button class="journey-step-btn locked" data-step="7" onclick="navigateToStep(7)" title="Step 7: AI Dev Roast & Compliments">
+            <span class="step-num-bubble">7</span>
+            <span class="step-btn-content">
+              <span class="step-icon">🤖</span>
+              <span class="step-name">AI Roast</span>
+            </span>
+            <span class="step-status-chip">🔒</span>
+          </button>
+
+          <button class="journey-step-btn locked" data-step="8" onclick="navigateToStep(8)" title="Step 8: Grand Wish & Final Letter">
+            <span class="step-num-bubble">8</span>
+            <span class="step-btn-content">
+              <span class="step-icon">💌</span>
+              <span class="step-name">Wish</span>
+            </span>
+            <span class="step-status-chip">🔒</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== HERO ==================== -->
+  <section id="hero" class="hero-section journey-step active">
+    <div class="aurora-glow glow-1"></div>
+    <div class="aurora-glow glow-2"></div>
+    <div class="balloons-container" id="balloons"></div>
+
+    <div class="hero-content">
+      <div class="hero-tag-badge">
+        <span class="tag-pulse"></span>
+        <span class="tag-text">✨ Leveling Up To A Brand New Year ✨</span>
+      </div>
+      
+      <h1 class="hero-title">
+        Happy Birthday,<br/>
+        <span class="gradient-text glow-text">My Favorite Human!</span>
+      </h1>
+      
+      <p class="hero-subtitle">
+        While other devs send ordinary lines of code, you get an entire interactive universe. 
+        Explore your memories, blow real digital candles, play arcade mini-games, and 
+        <strong>claim real gifts from your ₹500 shopping spree!</strong> 🚀
+      </p>
+
+      <!-- Live Friendship Stats Banner -->
+      <div class="friendship-counter-card">
+        <div class="counter-header">
+          <span class="terminal-dot red"></span>
+          <span class="terminal-dot yellow"></span>
+          <span class="terminal-dot green"></span>
+          <span class="counter-title">Friendship Uptime Monitor</span>
+        </div>
+        <div class="counter-grid">
+          <div class="counter-item">
+            <span class="counter-val" id="uptimeDays">1,460+</span>
+            <span class="counter-lbl">Days of Laughs</span>
+          </div>
+          <div class="counter-divider"></div>
+          <div class="counter-item">
+            <span class="counter-val" id="uptimeMemories">∞</span>
+            <span class="counter-lbl">Shared Secrets</span>
+          </div>
+          <div class="counter-divider"></div>
+          <div class="counter-item">
+            <span class="counter-val" id="uptimeBudget">₹500</span>
+            <span class="counter-lbl">Free Gift Budget</span>
+          </div>
+          <div class="counter-divider"></div>
+          <div class="counter-item">
+            <span class="counter-val" id="uptimeStatus">100%</span>
+            <span class="counter-lbl">BFF Compatibility</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="hero-buttons">
+        <button class="btn btn-primary btn-glow btn-big" onclick="goToStep(2)">
+          <span>✨ Enter the World ✨</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Floating 3D Particles -->
+    <div class="float-el el1">🎈</div>
+    <div class="float-el el2">💎</div>
+    <div class="float-el el3">🎁</div>
+    <div class="float-el el4">✨</div>
+    <div class="float-el el5">🧁</div>
+    <div class="float-el el6">⚡</div>
+
+    <div class="hero-scroll-hint">
+      <span>Scroll To Explore</span>
+      <div class="scroll-mouse">
+        <div class="scroll-wheel"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================== INTERACTIVE BIRTHDAY CAKE & CANDLE BLOW ==================== -->
+  <section id="cake" class="cake-section journey-step">
+    <div class="section-header" data-scroll>
+      <div class="section-badge">🎂 Make A Wish</div>
+      <h2 class="section-title">Interactive <span class="gradient-text">Candle Ritual</span></h2>
+      <p class="section-sub">Make a silent wish and blow into your mic (or tap the blow button) to extinguish the candles!</p>
+    </div>
+
+    <div class="cake-stage-wrapper" data-scroll>
+      <div class="cake-container" id="interactiveCake">
+        <!-- Candles -->
+        <div class="candles-row">
+          <div class="candle c1">
+            <div class="flame" id="flame1"></div>
+            <div class="smoke" id="smoke1"></div>
+            <div class="wick"></div>
+            <div class="candle-stick stripe-pink"></div>
+          </div>
+          <div class="candle c2">
+            <div class="flame" id="flame2"></div>
+            <div class="smoke" id="smoke2"></div>
+            <div class="wick"></div>
+            <div class="candle-stick stripe-purple"></div>
+          </div>
+          <div class="candle c3">
+            <div class="flame" id="flame3"></div>
+            <div class="smoke" id="smoke3"></div>
+            <div class="wick"></div>
+            <div class="candle-stick stripe-gold"></div>
+          </div>
+          <div class="candle c4">
+            <div class="flame" id="flame4"></div>
+            <div class="smoke" id="smoke4"></div>
+            <div class="wick"></div>
+            <div class="candle-stick stripe-cyan"></div>
+          </div>
+        </div>
+
+        <!-- Cake Layers -->
+        <div class="cake-layer layer-top">
+          <div class="frosting-drips">
+            <span></span><span></span><span></span><span></span><span></span><span></span><span></span>
+          </div>
+          <div class="layer-fill">🍓 Strawberry Truffle Cream</div>
+        </div>
+        <div class="cake-layer layer-middle">
+          <div class="frosting-drips">
+            <span></span><span></span><span></span><span></span><span></span><span></span><span></span>
+          </div>
+          <div class="layer-fill">🍫 Belgian Dark Ganache</div>
+        </div>
+        <div class="cake-layer layer-bottom">
+          <div class="layer-plate"></div>
+        </div>
+      </div>
+
+      <!-- Blow Controls -->
+      <div class="blow-action-box">
+        <div class="flame-status-text" id="flameStatusText">
+          🕯️ The candles are burning bright! Make a wish...
+        </div>
+        
+        <div class="blow-buttons-group">
+          <button class="btn btn-primary btn-blow" id="blowCandleBtn" onclick="blowOutCandles(true)">
+            <span>💨 Tap To Blow Out Candles!</span>
+          </button>
+          <button class="btn btn-secondary btn-mic" id="micBlowBtn" onclick="startMicBlowDetection()">
+            <span id="micIcon">🎙️</span>
+            <span id="micBtnText">Use Real Mic Blow</span>
+          </button>
+          <button class="btn btn-outline btn-relight hidden" id="relightBtn" onclick="relightCandles()">
+            <span>✨ Relight Candles</span>
+          </button>
+        </div>
+        
+        <p class="blow-tip-sub">Tip: If mic is enabled, a gentle blow near your microphone will extinguish the flames dynamically!</p>
+        
+        <div class="step-transition-container hidden" id="cakeTransition" style="margin-top: 30px; text-align: center;">
+          <button class="btn btn-primary btn-glow btn-big" onclick="goToStep(3)">
+            <span>🎮 Go to Arcade & Earn Your Gift Voucher →</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================== ₹500 GIFT VAULT & MART ==================== -->
+  <section id="gifts" class="gifts-section journey-step">
+    <div class="gift-bg-glow"></div>
+    <div class="section-header" data-scroll>
+      <div class="section-badge luxury-badge">🛍️ Birthday Shopping Spree</div>
+      <h2 class="section-title">The ₹500 <span class="gradient-text">Birthday Gift Vault</span></h2>
+      <p class="section-sub">
+        No boring generic code here. Pick whatever you love up to <strong>₹500 INR</strong>. 
+        Submit your order, and your friend will receive it on WhatsApp & deliver it to you! 🎁
+      </p>
+    </div>
+
+    <!-- Claimed Rewards Celebration Card (Shown when order has been checked out) -->
+    <div id="claimedVaultView" class="claimed-vault-view hidden" data-scroll>
+      <div class="claimed-card-glow"></div>
+      <div class="claimed-vault-card">
+        <div class="claimed-card-header">
+          <div class="claimed-status-pill">
+            <span class="status-dot-pulse"></span>
+            <span>✅ REWARD CLAIMED & LOCKED IN</span>
+          </div>
+          <h3 class="claimed-title">🎁 Your ₹500 Birthday Gift Spree is Registered!</h3>
+          <p class="claimed-desc">
+            Your custom gift selection was placed and saved! The available shopping budget is reset to <strong>₹0</strong>. 
+            You can view your claimed goodies below, review your golden invoice, or open the WhatsApp order dispatch anytime! 🥳
+          </p>
+        </div>
+
+        <div class="claimed-order-meta" id="claimedOrderMeta">
+          <!-- Dynamically populated with order metadata -->
+        </div>
+
+        <div class="claimed-items-container">
+          <h4 class="claimed-items-heading">🛍️ Claimed Gift Items:</h4>
+          <div class="claimed-items-grid" id="claimedItemsGrid">
+            <!-- Dynamically populated with claimed items -->
+          </div>
+        </div>
+
+        <div class="claimed-actions-row">
+          <button class="btn btn-whatsapp btn-glow" onclick="dispatchOrderToWhatsApp()">
+            <span>📱 Resend / View WhatsApp Order</span>
+          </button>
+          <button class="btn btn-secondary" onclick="openReceiptModalFromData()">
+            <span>📄 View Golden Invoice</span>
+          </button>
+          <button class="btn btn-outline" onclick="copyOrderDetailsToClipboard()">
+            <span>📋 Copy Details</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Live Budget Tracker Header -->
+    <div class="budget-tracker-card" id="budgetTrackerCard" data-scroll>
+      <div class="budget-info-row">
+        <div class="budget-stat">
+          <span class="budget-stat-label">Total Allocated Budget</span>
+          <span class="budget-stat-val">₹500.00</span>
+        </div>
+        <div class="budget-stat highlight">
+          <span class="budget-stat-label">Current Cart Total</span>
+          <span class="budget-stat-val cart-total-text" id="budgetCartTotal">₹0.00</span>
+        </div>
+        <div class="budget-stat success">
+          <span class="budget-stat-label">Remaining Balance</span>
+          <span class="budget-stat-val balance-text" id="budgetRemaining">₹500.00</span>
+        </div>
+      </div>
+
+      <div class="budget-bar-wrapper">
+        <div class="budget-bar-track">
+          <div class="budget-bar-fill" id="budgetProgressBar" style="width: 0%;"></div>
+        </div>
+        <div class="budget-bar-markers">
+          <span>₹0</span>
+          <span>₹250</span>
+          <span>₹500 (Max)</span>
+        </div>
+      </div>
+
+      <div class="budget-alert" id="budgetAlert">
+        ✨ You have ₹500 to spend! Add your favorite treats below.
+      </div>
+      <div class="budget-later-row" style="margin-top: 14px; text-align: center;">
+        <button class="btn btn-outline btn-sm" onclick="enableStoreTimerAndProceed()">
+          <span>⏳ Want to pick gifts later? Start 12h Timer & Continue →</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Gift Items Catalog Grid -->
+    <div class="gifts-grid" id="giftsGrid" data-scroll>
+      <!-- Populated via JavaScript for maximum dynamic feel -->
+    </div>
+
+    <!-- Quick Cart Floating CTA -->
+    <div class="cart-floating-cta" id="floatingCartCta">
+      <div class="floating-cta-info">
+        <span class="floating-cta-count" id="floatingCartCount">0 items</span>
+        <span class="floating-cta-total" id="floatingCartTotal">₹0</span>
+      </div>
+      <div class="floating-cta-actions" style="display: flex; gap: 8px; align-items: center;">
+        <button class="btn btn-secondary btn-sm" onclick="enableStoreTimerAndProceed()" title="Save selection and continue with 12h timer">
+          <span>⏳ Decide Later</span>
+        </button>
+        <button class="btn btn-primary" onclick="openCartDrawer()">
+          <span>View Cart & Checkout 🛒</span>
+        </button>
+      </div>
+    </div>
+
+    <div class="step-transition-container" id="storeTransition" style="margin-top: 40px; text-align: center; width: 100%;">
+      <div style="display: flex; flex-direction: column; gap: 12px; align-items: center;">
+        <button class="btn btn-primary btn-glow btn-big" onclick="goToStep(5)">
+          <span>🎟️ Proceed to VIP Friendship Vouchers →</span>
+        </button>
+        <button class="btn btn-outline btn-sm" onclick="enableStoreTimerAndProceed()">
+          <span>⏳ Pick Gifts Later (12-Hour Timer will stay active) →</span>
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================== SCRATCH & WIN VIP COUPONS ==================== -->
+  <section id="coupons" class="coupons-section journey-step">
+    <div class="section-header" data-scroll>
+      <div class="section-badge">🎟️ Exclusive VIP Perks</div>
+      <h2 class="section-title">Scratch & Win <span class="gradient-text">Friendship Vouchers</span></h2>
+      <p class="section-sub">Scratch off the silver foil with your mouse or finger to reveal permanent friendship redeemable coupons!</p>
+    </div>
+
+    <div class="scratch-cards-grid" data-scroll>
+      <!-- Scratch Card 1 -->
+      <div class="scratch-card-box">
+        <div class="scratch-card-secret">
+          <div class="secret-badge">VIP TICKET #01</div>
+          <div class="secret-emoji">☕🍜</div>
+          <h3>2:00 AM Midnight Fuel</h3>
+          <p>Valid for 1 Free Late-Night Chai, Maggi, or Coffee run anytime you have an existential crisis or need to gossip!</p>
+          <div class="secret-tag">Code: BFF-CHAI-NIGHT</div>
+        </div>
+        <canvas class="scratch-canvas" id="scratchCanvas1" width="300" height="230"></canvas>
+        <div class="scratch-hint" id="scratchHint1">✨ Scratch Here ✨</div>
+      </div>
+
+      <!-- Scratch Card 2 -->
+      <div class="scratch-card-box">
+        <div class="scratch-card-secret">
+          <div class="secret-badge">VIP TICKET #02</div>
+          <div class="secret-emoji">🎬🍿</div>
+          <h3>Movie Night Veto Power</h3>
+          <p>You get 100% absolute authority to pick whatever movie or series we watch next, with zero complaints allowed!</p>
+          <div class="secret-tag">Code: BFF-VETO-POWER</div>
+        </div>
+        <canvas class="scratch-canvas" id="scratchCanvas2" width="300" height="230"></canvas>
+        <div class="scratch-hint" id="scratchHint2">✨ Scratch Here ✨</div>
+      </div>
+
+      <!-- Scratch Card 3 -->
+      <div class="scratch-card-box">
+        <div class="scratch-card-secret">
+          <div class="secret-badge">VIP TICKET #03</div>
+          <div class="secret-emoji">🛡️🍕</div>
+          <h3>Emergency Pizza Therapy</h3>
+          <p>Redeemable during bad days: Instant pizza delivery + 1 hour of patient listening and hyping you up as the best!</p>
+          <div class="secret-tag">Code: BFF-PIZZA-HEAL</div>
+        </div>
+        <canvas class="scratch-canvas" id="scratchCanvas3" width="300" height="230"></canvas>
+        <div class="scratch-hint" id="scratchHint3">✨ Scratch Here ✨</div>
+      </div>
+    </div>
+
+    <div class="step-transition-container hidden" id="couponsTransition" style="margin-top: 40px; text-align: center; width: 100%;">
+      <button class="btn btn-primary btn-glow btn-big" onclick="goToStep(6)">
+        <span>📸 Reveal Our Story & Memories →</span>
+      </button>
+    </div>
+  </section>
+
+  <!-- ==================== MEMORIES TIMELINE & POLAROID STEP ==================== -->
+  <div id="step-memories" class="journey-step">
+    <!-- ==================== MEMORIES TIMELINE ==================== -->
+    <section id="memories" class="memories-section">
+    <div class="section-header" data-scroll>
+      <div class="section-badge">📸 Our Story</div>
+      <h2 class="section-title">Timeline of <span class="gradient-text">Iconic Chapters</span></h2>
+      <p class="section-sub">Every chapter we wrote together, rendered in 4K memories</p>
+    </div>
+
+    <div class="timeline">
+      <div class="memory-card left" data-scroll>
+        <div class="memory-card-inner">
+          <div class="memory-emoji">🌅</div>
+          <div class="memory-year">2020</div>
+          <h3>The Origin Story</h3>
+          <p>The day we first crossed paths. What started as casual banter quickly turned into the most chaotic, beautiful friendship!</p>
+          <div class="memory-tags"><span>#DayOne</span><span>#Legendary</span><span>#ZeroAwkwardness</span></div>
+        </div>
+      </div>
+
+      <div class="timeline-center">
+        <div class="timeline-dot"></div>
+        <div class="timeline-dot"></div>
+        <div class="timeline-dot"></div>
+      </div>
+
+      <div class="memory-card right" data-scroll>
+        <div class="memory-card-inner">
+          <div class="memory-emoji">🏕️</div>
+          <div class="memory-year">2021</div>
+          <h3>The Unplanned Road Trip</h3>
+          <p>Spontaneous highway drive, getting hopelessly lost with zero signal, singing Bollywood and indie tracks at full volume!</p>
+          <div class="memory-tags"><span>#RoadTrip</span><span>#NoGPS</span><span>#ChaiStops</span></div>
+        </div>
+      </div>
+
+      <div class="timeline-center">
+        <div class="timeline-dot"></div>
+        <div class="timeline-dot"></div>
+        <div class="timeline-dot"></div>
+      </div>
+
+      <div class="memory-card left" data-scroll>
+        <div class="memory-card-inner">
+          <div class="memory-emoji">🎭</div>
+          <div class="memory-year">2022</div>
+          <h3>All-Nighters & Inside Jokes</h3>
+          <p>Late night debugging sessions, endless meme exchanges, laughing until our stomachs ached, and sharing life's deepest thoughts.</p>
+          <div class="memory-tags"><span>#NightOwls</span><span>#InsideJokes</span><span>#Unfiltered</span></div>
+        </div>
+      </div>
+
+      <div class="timeline-center">
+        <div class="timeline-dot"></div>
+        <div class="timeline-dot"></div>
+        <div class="timeline-dot"></div>
+      </div>
+
+      <div class="memory-card right" data-scroll>
+        <div class="memory-card-inner">
+          <div class="memory-emoji">🌊</div>
+          <div class="memory-year">2023</div>
+          <h3>The Epic Beach Sunset</h3>
+          <p>Sitting by the shore watching the horizon turn violet, eating street snacks, and making promises to conquer the world together.</p>
+          <div class="memory-tags"><span>#SunsetVibes</span><span>#CoreMemory</span><span>#GoldenHour</span></div>
+        </div>
+      </div>
+
+      <div class="timeline-center">
+        <div class="timeline-dot"></div>
+        <div class="timeline-dot"></div>
+        <div class="timeline-dot"></div>
+      </div>
+
+      <div class="memory-card left" data-scroll>
+        <div class="memory-card-inner">
+          <div class="memory-emoji">🎓</div>
+          <div class="memory-year">2024 - 2025</div>
+          <h3>Leveling Up & Major Wins</h3>
+          <p>Celebrating big career breakthroughs, personal milestones, cheering for each other's wins like proud parents!</p>
+          <div class="memory-tags"><span>#Wins</span><span>#ProudOfYou</span><span>#Unstoppable</span></div>
+        </div>
+      </div>
+
+      <div class="timeline-center">
+        <div class="timeline-dot"></div>
+        <div class="timeline-dot"></div>
+        <div class="timeline-dot"></div>
+      </div>
+
+      <div class="memory-card right" data-scroll>
+        <div class="memory-card-inner special-card">
+          <div class="memory-emoji">🎂</div>
+          <div class="memory-year">TODAY & FOREVER</div>
+          <h3>Your Best Year Yet!</h3>
+          <p>Another year wiser, bolder, and more fabulous. The universe is genuinely lucky to have your light in it. Happy Birthday! 🥳</p>
+          <div class="memory-tags"><span>#MainCharacter</span><span>#ForeverFriends</span><span>#VIP</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================== POLAROID GALLERY ==================== -->
+  <section class="gallery-section">
+    <div class="section-header" data-scroll>
+      <div class="section-badge">🖼️ Aesthetic Keepsakes</div>
+      <h2 class="section-title">Snaps In <span class="gradient-text">Polaroid</span></h2>
+    </div>
+    <div class="polaroid-grid" data-scroll>
+      <div class="polaroid" style="--rot:-4deg; --delay:0s">
+        <div class="polaroid-img">🌺</div>
+        <p>Spring Sunshine 🌸</p>
+      </div>
+      <div class="polaroid" style="--rot:3deg; --delay:0.1s">
+        <div class="polaroid-img">🎡</div>
+        <p>Funfair Madness 🎢</p>
+      </div>
+      <div class="polaroid" style="--rot:-2deg; --delay:0.2s">
+        <div class="polaroid-img">🍕</div>
+        <p>Pizza Feasts 🍕</p>
+      </div>
+      <div class="polaroid" style="--rot:5deg; --delay:0.3s">
+        <div class="polaroid-img">🌄</div>
+        <p>Golden Sunrise 🏔️</p>
+      </div>
+      <div class="polaroid" style="--rot:-3deg; --delay:0.4s">
+        <div class="polaroid-img">🎵</div>
+        <p>Acoustic Vibe 🎤</p>
+      </div>
+      <div class="polaroid" style="--rot:2deg; --delay:0.5s">
+        <div class="polaroid-img">🌃</div>
+        <p>Neon Lights ✨</p>
+      </div>
+    </div>
+    
+    <div class="step-transition-container" id="memoriesTransition" style="margin-top: 40px; text-align: center; width: 100%;">
+      <button class="btn btn-primary btn-glow btn-big" onclick="goToStep(7)">
+        <span>🤖 Consult the AI Dev Oracle →</span>
+      </button>
+    </div>
+  </section>
+</div>
+
+  <!-- ==================== ARCADE GAMES ==================== -->
+  <section id="games" class="games-section journey-step">
+    <div class="section-header" data-scroll>
+      <div class="section-badge">🎮 Birthday Arcade</div>
+      <h2 class="section-title">Unlock The <span class="gradient-text">Final Wish</span></h2>
+      <p class="section-sub">Clear all 3 fun arcade challenges to unlock your official Golden Birthday Certificate! 🏆</p>
+    </div>
+
+    <!-- Level Selector -->
+    <div class="level-selector" data-scroll>
+      <div class="level-btn active" id="lvl1Btn" onclick="selectLevel(1)">
+        <span class="level-num">LEVEL 01</span>
+        <span class="level-name">Memory Match</span>
+        <span class="level-status" id="lvl1Status">🃏</span>
+      </div>
+      <div class="level-connector"></div>
+      <div class="level-btn locked" id="lvl2Btn" onclick="selectLevel(2)">
+        <span class="level-num">LEVEL 02</span>
+        <span class="level-name">BFF Trivia</span>
+        <span class="level-status" id="lvl2Status">🔒</span>
+      </div>
+      <div class="level-connector"></div>
+      <div class="level-btn locked" id="lvl3Btn" onclick="selectLevel(3)">
+        <span class="level-num">LEVEL 03</span>
+        <span class="level-name">Balloon Blitz</span>
+        <span class="level-status" id="lvl3Status">🔒</span>
+      </div>
+    </div>
+
+    <!-- Game Container -->
+    <div class="game-container" id="gameContainer" data-scroll>
+
+      <!-- LEVEL 1: Memory Card Match -->
+      <div class="game-level" id="level1">
+        <div class="game-header">
+          <h3>🃏 Holographic Memory Matrix</h3>
+          <p>Find matching pairs of birthday icons! Test your developer brain speed.</p>
+          <div class="game-stats">
+            <div class="stat-box">
+              <span class="stat-label">Flips</span>
+              <span class="stat-value" id="flipCount">0</span>
+            </div>
+            <div class="stat-box">
+              <span class="stat-label">Pairs</span>
+              <span class="stat-value" id="matchCount">0/8</span>
+            </div>
+            <div class="stat-box">
+              <span class="stat-label">Time</span>
+              <span class="stat-value" id="gameTimer">0s</span>
+            </div>
+          </div>
+        </div>
+        <div class="card-grid" id="cardGrid"></div>
+        <div class="game-controls">
+          <button class="btn btn-game" onclick="restartMemoryGame()">🔄 Restart Board</button>
+        </div>
+        <div class="win-overlay" id="level1Win">
+          <div class="win-box">
+            <div class="win-emoji">🎉</div>
+            <h3>Matrix Decoded!</h3>
+            <p id="winStats">Incredible memory agility!</p>
+            <div class="star-rating" id="starRating">⭐⭐⭐</div>
+            <button class="btn btn-primary" onclick="unlockNextLevel(2)">Proceed To Level 2 →</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- LEVEL 2: BFF Quiz -->
+      <div class="game-level hidden" id="level2">
+        <div class="game-header">
+          <h3>🤔 BFF Friendship Compatibility Quiz</h3>
+          <p>Let's verify your official friendship authentication credentials!</p>
+          <div class="quiz-progress">
+            <div class="progress-bar"><div class="progress-fill" id="quizProgress"></div></div>
+            <span id="quizProgressText">Question 1 / 8</span>
+          </div>
+        </div>
+        <div class="quiz-area" id="quizArea"></div>
+        <div class="win-overlay" id="level2Win">
+          <div class="win-box">
+            <div class="win-emoji">🧠</div>
+            <h3>Quiz Verified!</h3>
+            <p id="quizWinText"></p>
+            <div class="star-rating" id="quizStars">⭐⭐⭐</div>
+            <button class="btn btn-primary" onclick="unlockNextLevel(3)">Unlock Finale: Balloon Blitz →</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- LEVEL 3: Balloon Pop -->
+      <div class="game-level hidden" id="level3">
+        <div class="game-header">
+          <h3>🎈 Neon Balloon Blitz</h3>
+          <p>Click/tap balloons to pop them before time expires! Watch out for bombs 💣!</p>
+          <div class="game-stats">
+            <div class="stat-box">
+              <span class="stat-label">Score</span>
+              <span class="stat-value" id="balloonScore">0</span>
+            </div>
+            <div class="stat-box">
+              <span class="stat-label">Time</span>
+              <span class="stat-value" id="balloonTimer">30s</span>
+            </div>
+            <div class="stat-box">
+              <span class="stat-label">Popped</span>
+              <span class="stat-value" id="balloonPopped">0</span>
+            </div>
+          </div>
+        </div>
+        <div class="balloon-arena" id="balloonArena">
+          <div class="balloon-start" id="balloonStart">
+            <button class="btn btn-primary btn-big" onclick="startBalloonGame()">🎈 Start Blitz Mode!</button>
+          </div>
+        </div>
+        <div class="win-overlay" id="level3Win">
+          <div class="win-box grand-finale">
+            <div class="win-emoji">🏆</div>
+            <h3>Arcade Champion!</h3>
+            <p id="balloonWinText"></p>
+            <div class="star-rating">⭐⭐⭐</div>
+            <button class="btn btn-primary" onclick="showCouponModal()">🎁 Claim Your ₹500 Birthday Coupon! →</button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ==================== AI DEV COMPLIMENT & ROAST GENERATOR ==================== -->
+  <section id="devcompliments" class="compliments-section journey-step">
+    <div class="section-header" data-scroll>
+      <div class="section-badge">🤖 AI Dev Oracle</div>
+      <h2 class="section-title">The Dev Compliment & <span class="gradient-text">Friendly Roast Machine</span></h2>
+      <p class="section-sub">Because as a developer, you deserve customized compliments and witty algorithmic love!</p>
+    </div>
+
+    <div class="compliment-machine-card" data-scroll>
+      <div class="machine-screen">
+        <div class="code-header">
+          <span class="file-name"><span class="code-dot"></span> friend_compliment_ai.ts</span>
+          <span class="status-pill">● STATUS: 200 OK</span>
+        </div>
+        <div class="machine-output-box" id="complimentDisplay">
+          <p class="code-comment">// Click below to generate an algorithmic truth</p>
+          <h3 class="compliment-text">"You're like a bug-free production release on a Friday afternoon: extremely rare, deeply appreciated, and universally loved." ✨</h3>
+        </div>
+      </div>
+
+      <div class="machine-controls">
+        <button class="btn btn-primary" onclick="generateDevCompliment('sweet')">
+          <span>💖 Generate Sweet Compliment</span>
+        </button>
+        <button class="btn btn-secondary" onclick="generateDevCompliment('roast')">
+          <span>🌶️ Mild Dev Roast</span>
+        </button>
+        <button class="btn btn-outline" onclick="generateDevCompliment('dev')">
+          <span>⚡ Coder Love Pun</span>
+        </button>
+      </div>
+      
+      <div class="step-transition-container" id="complimentsTransition" style="margin-top: 40px; text-align: center; width: 100%;">
+        <button class="btn btn-primary btn-glow btn-big" onclick="goToStep(8)">
+          <span>📜 Open the Official Birthday Wish Decree →</span>
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================== BIRTHDAY WISH & GOLDEN CERTIFICATE ==================== -->
+  <section id="wish" class="wish-section journey-step">
+    <div class="wish-content" data-scroll>
+      <div class="wish-emoji-top">🎂</div>
+      <h2 class="wish-title">Happy Birthday, <span class="gradient-text">Legend!</span></h2>
+      
+      <div class="wish-letter">
+        <div class="letter-stamp">OFFICIAL BFF SEAL ★ 2026</div>
+        <p>Dearest Best Friend,</p>
+        <p>
+          In a world full of standard templates, default configurations, and predictable scripts, 
+          you are the most vibrant, thoughtful, and irreplaceable human being.
+        </p>
+        <p>
+          Thank you for being the person who answers late-night chaos, celebrates every little victory, 
+          understands every unspoken glance, and makes ordinary days feel like extraordinary adventures.
+        </p>
+        <p>
+          May this new year bring you boundless happiness, high-paying wins, clean code, uninterrupted sleep, 
+          and all the spontaneous chai/coffee dates we can fit into a calendar. 🥂
+        </p>
+        <p class="wish-signature">With all my love & infinite friendship commits, ❤️<br/><span class="sig-name">Your Ultimate Best Friend</span></p>
+      </div>
+
+      <div class="wish-action-buttons">
+        <button class="btn btn-primary btn-big btn-glow" onclick="triggerCongratsConfetti()">
+          <span>🎉 Trigger Mega Confetti Cannon!</span>
+        </button>
+        <button class="btn btn-secondary btn-big" onclick="navigateToStep(4)">
+          <span>🛍️ Review Your Store Selection</span>
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================== SHOPPING CART DRAWER ==================== -->
+  <div class="cart-drawer-overlay" id="cartOverlay" onclick="closeCartDrawer()"></div>
+  <aside class="cart-drawer" id="cartDrawer">
+    <div class="cart-drawer-header">
+      <div class="cart-drawer-title">
+        <span>🛍️ Your Gift Bag</span>
+        <span class="cart-badge-pill" id="drawerCartCount">0 Items</span>
+      </div>
+      <button class="drawer-close-btn" onclick="closeCartDrawer()" aria-label="Close Cart">✕</button>
+    </div>
+
+    <!-- Live Budget Bar in Drawer -->
+    <div class="drawer-budget-banner">
+      <div class="drawer-budget-labels">
+        <span>Budget: ₹500.00</span>
+        <span class="drawer-balance" id="drawerBalanceText">₹500.00 left</span>
+      </div>
+      <div class="drawer-budget-bar">
+        <div class="drawer-budget-fill" id="drawerProgressFill" style="width: 0%;"></div>
+      </div>
+    </div>
+
+    <!-- Items List -->
+    <div class="cart-items-container" id="cartItemsList">
+      <!-- Dynamic cart items -->
+      <div class="empty-cart-state">
+        <div class="empty-emoji">🎁</div>
+        <h4>Your gift cart is empty!</h4>
+        <p>Explore the ₹500 Gift Vault and pick whatever you love.</p>
+        <button class="btn btn-primary btn-sm" onclick="closeCartDrawer()">Browse Gifts</button>
+      </div>
+    </div>
+
+    <!-- Drawer Footer -->
+    <div class="cart-drawer-footer" id="cartDrawerFooter">
+      <div class="cart-summary-breakdown">
+        <div class="summary-line">
+          <span>Total Selected:</span>
+          <span class="summary-val font-bold" id="drawerTotalSum">₹0.00</span>
+        </div>
+        <div class="summary-line text-success">
+          <span>Cost to you:</span>
+          <span class="summary-val font-bold">₹0 (Friend Sponsors!)</span>
+        </div>
+      </div>
+
+      <button class="btn btn-primary btn-checkout" id="proceedCheckoutBtn" onclick="openCheckoutModal()" disabled>
+        <span>Proceed To Order (₹0 to pay) 🎁</span>
+      </button>
+      <button class="btn btn-outline btn-sm w-100" style="margin-top: 10px;" onclick="closeCartDrawer(); enableStoreTimerAndProceed();">
+        <span>⏳ Decide Later (Start 12h Timer & Explore) →</span>
+      </button>
+    </div>
+  </aside>
+
+  <!-- ==================== CHECKOUT & WHATSAPP ORDER MODAL ==================== -->
+  <div class="modal-overlay" id="checkoutModalOverlay">
+    <div class="modal-card checkout-modal-card">
+      <button class="modal-close-btn" onclick="closeCheckoutModal()">✕</button>
+      
+      <div class="modal-header">
+        <div class="modal-badge">🎫 GOLDEN BIRTHDAY ORDER TICKET</div>
+        <h3>Claim Your ₹500 Birthday Gifts!</h3>
+        <p>Fill in where to deliver or how you want to receive these gifts. We'll generate an instant WhatsApp dispatch message!</p>
+      </div>
+
+      <div class="order-preview-box" id="checkoutOrderPreview">
+        <!-- Preview filled by JS -->
+      </div>
+
+      <form id="checkoutForm" onsubmit="handlePlaceOrder(event)">
+        <div class="form-grid">
+          <div class="form-group">
+            <label for="recipientName">Your Name / Nickname</label>
+            <input type="text" id="recipientName" required placeholder="e.g. Birthday Queen" value="Birthday Star">
+          </div>
+          <div class="form-group">
+            <label for="deliveryAddress">Delivery Address / Room / Location</label>
+            <input type="text" id="deliveryAddress" required placeholder="e.g. Flat 402, Sunshine Heights or Hostel 4">
+          </div>
+          <div class="form-group full-width">
+            <label for="customPreferences">Special Instructions / Flavour / Note for Friend</label>
+            <textarea id="customPreferences" rows="2" placeholder="e.g. 'Hazelnut flavour please!' or 'Deliver on Saturday evening!'"></textarea>
+          </div>
+          <div class="form-group full-width">
+            <label for="friendPhone">Friend's WhatsApp Number (Optional prefill)</label>
+            <input type="tel" id="friendPhone" placeholder="Enter friend's number with country code, e.g. 919876543210 (or leave blank to pick contact)">
+          </div>
+        </div>
+
+        <div class="modal-actions">
+          <button type="submit" class="btn btn-primary btn-big btn-glow w-100">
+            <span>🚀 Place Order & Open WhatsApp</span>
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ==================== GOLDEN ORDER RECEIPT MODAL ==================== -->
+  <div class="modal-overlay" id="receiptModalOverlay">
+    <div class="modal-card receipt-modal-card">
+      <button class="modal-close-btn" onclick="closeReceiptModal()">✕</button>
+      
+      <div class="receipt-ticket" id="receiptTicket">
+        <div class="receipt-header">
+          <div class="receipt-logo">🎂 BFF GIFT DISPATCH INVOICE</div>
+          <div class="receipt-id" id="receiptOrderId">ORDER #BFF-2026-8942</div>
+          <div class="receipt-date" id="receiptDate">Aug 27, 2026</div>
+        </div>
+
+        <div class="receipt-divider"></div>
+
+        <div class="receipt-items-list" id="receiptItemsList">
+          <!-- Rendered by JS -->
+        </div>
+
+        <div class="receipt-divider"></div>
+
+        <div class="receipt-totals">
+          <div class="r-row"><span>Subtotal:</span><span id="receiptSubtotal">₹450</span></div>
+          <div class="r-row"><span>BFF Birthday Discount:</span><span class="text-success">-100% (FREE)</span></div>
+          <div class="r-row total"><span>Amount Payable by You:</span><span>₹0.00</span></div>
+          <div class="r-row billed"><span>Billed To:</span><span>Your Best Friend (Paid with ❤️)</span></div>
+        </div>
+
+        <div class="receipt-address-box" id="receiptAddressBox">
+          <!-- Rendered by JS -->
+        </div>
+
+        <div class="receipt-barcode">
+          <div class="barcode-lines">||||| | |||| ||| |||| | |||||| | |||</div>
+          <span>AUTHORIZED BIRTHDAY PERK • NON-REFUNDABLE LOVE</span>
+        </div>
+      </div>
+
+      <div class="receipt-actions">
+        <button class="btn btn-primary" id="sendWhatsAppBtn" onclick="dispatchOrderToWhatsApp()">
+          <span>📲 Send Directly via WhatsApp</span>
+        </button>
+        <button class="btn btn-secondary" onclick="copyOrderDetailsToClipboard()">
+          <span>📋 Copy Order Summary</span>
+        </button>
+        <button class="btn btn-primary btn-glow" id="receiptProceedBtn" style="margin-top: 15px; width: 100%; display: none;" onclick="closeReceiptModal(); goToStep(5);">
+          <span>🎟️ Proceed to VIP Friendship Vouchers →</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== COUPON & RULES MODAL ==================== -->
+  <div class="modal-overlay" id="couponModalOverlay">
+    <div class="modal-card coupon-modal-card">
+      <div class="modal-badge">🎉 MISSION COMPLETE: GIFT EARNED!</div>
+      
+      <!-- Glowing Visual Coupon -->
+      <div class="gift-coupon-card">
+        <div class="coupon-decor top"></div>
+        <div class="coupon-body">
+          <span class="coupon-title">VIP BIRTHDAY GIFT VOUCHER</span>
+          <div class="coupon-value">₹500</div>
+          <span class="coupon-code">CODE: BFF-GIFT-500</span>
+          <span class="coupon-footer">Authorized by BFF.OS Kernel</span>
+        </div>
+        <div class="coupon-decor bottom"></div>
+      </div>
+
+      <!-- Rules Letter -->
+      <div class="rules-letter-box">
+        <h3>📜 Gift Vault Rules & Conditions</h3>
+        <ul style="text-align: left; list-style-type: none; margin: 15px 0; padding: 0;">
+          <li style="margin-bottom: 12px; display: flex; align-items: flex-start; gap: 8px;">
+            <span>⌛</span>
+            <div><strong>12-Hour Selection Window:</strong> You have exactly 12 hours from the moment you click 'Unlock & Enter the Gift Store' to select items from the store up to a total of <strong>₹500</strong>.</div>
+          </li>
+          <li style="margin-bottom: 12px; display: flex; align-items: flex-start; gap: 8px;">
+            <span>⚠️</span>
+            <div><strong>System Auto-Pick Rule:</strong> If you fail to submit your checkout order within 12 hours, the BFF Administrator (your bestie) reserves the absolute right to auto-select and purchase whatever items they want to give you!</div>
+          </li>
+          <li style="margin-bottom: 0; display: flex; align-items: flex-start; gap: 8px;">
+            <span>💰</span>
+            <div><strong>Discount Applied:</strong> 100% discount applied at checkout. Value: ₹500 INR. Billed directly to your friend.</div>
+          </li>
+        </ul>
+      </div>
+
+      <div class="modal-actions">
+        <button class="btn btn-primary btn-big btn-glow w-100" id="claimCouponBtn" onclick="claimCouponAndOpenStore()">
+          <span>🛍️ Unlock & Enter the Gift Store →</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== DEVELOPER EASTER EGG TERMINAL ==================== -->
+  <div class="terminal-modal-overlay" id="terminalOverlay">
+    <div class="terminal-window" id="terminalWindow">
+      <div class="terminal-titlebar">
+        <div class="terminal-controls">
+          <span class="term-btn term-close" onclick="closeTerminal()"></span>
+          <span class="term-btn term-min"></span>
+          <span class="term-btn term-max"></span>
+        </div>
+        <div class="term-title">bff_core_kernel — bash - 80x24</div>
+        <div class="term-hotkey-hint">Press ESC to close</div>
+      </div>
+      
+      <div class="terminal-body" id="terminalBody">
+        <div class="term-welcome">
+          <pre class="ascii-art">
+  ____  ______ _____   ____   _____ 
+ |  _ \|  ____|  __ \ / __ \ / ____|
+ | |_) | |__  | |__) | |  | | (___  
+ |  _ <|  __| |  ___/| |  | |\___ \ 
+ | |_) | |    | |    | |__| |____) |
+ |____/|_|    |_|     \____/|_____/ 
+          </pre>
+          <p class="term-highlight">Welcome to BFF Kernel v2.4.0-release (x86_64-friendship-apple-darwin)</p>
+          <p>Type <code class="cmd-badge">help</code> to display available system commands.</p>
+          <p>Quick shortcuts: <code class="cmd-badge">git log</code>, <code class="cmd-badge">hack_heart</code>, <code class="cmd-badge">cat friendship.json</code>, <code class="cmd-badge">sudo love</code></p>
+        </div>
+        
+        <div class="term-history" id="terminalHistory"></div>
+        
+        <div class="term-input-line">
+          <span class="term-prompt">bff@birthday-machine:~$</span>
+          <input type="text" id="terminalInput" class="term-input" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" autofocus />
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== FOOTER ==================== -->
+  <footer class="footer">
+    <div class="footer-content">
+      <div class="footer-logo">🎂 BFF.OS</div>
+      <p class="footer-tagline">Engineered with ❤️, caffeine, and endless appreciation for the best person on Earth.</p>
+      <div class="footer-links">
+        <a href="#hero">Top</a> • 
+        <a href="#gifts">₹500 Vault</a> • 
+        <a href="#cake">Blow Candle</a> • 
+        <a href="#games">Arcade</a> • 
+        <a href="javascript:void(0)" onclick="openTerminal()">Dev Terminal</a>
+      </div>
+      <p class="footer-sub">Happy Birthday! Stay iconic, stay brilliant, and keep smiling! 🎉✨</p>
+    </div>
+  </footer>
+
+  <!-- Toast Notification -->
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <script src="app.js"></script>
+</body>
+</html>
