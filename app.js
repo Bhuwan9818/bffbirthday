@@ -148,33 +148,39 @@ if (audioToggleBtn) {
 }
 
 // =====================================================
-// RESPONSIVE HEADER HEIGHT SYNC
-// Measures real navbar + tracker heights and writes
-// them to CSS custom properties so content is never
-// hidden behind fixed headers on any screen size.
+// RESPONSIVE HEADER HEIGHT SYNC (CACHED & OPTIMIZED)
+// Measures real navbar + tracker heights only when layout
+// actually changes, preventing forced layout reflows during scroll.
 // =====================================================
+let cachedNavH = 0;
+let cachedTrackH = 0;
+let cachedBannerH = 0;
+
 function syncHeaderVars() {
   const navbar  = document.getElementById('navbar');
   const tracker = document.getElementById('journeyTracker');
   const banner  = document.getElementById('storeCountdownBanner');
   const root    = document.documentElement;
 
-  const navH     = navbar  ? navbar.getBoundingClientRect().height  : 64;
-  const trackH   = tracker ? tracker.getBoundingClientRect().height : 76;
+  const navH     = navbar  ? Math.round(navbar.getBoundingClientRect().height)  : 64;
+  const trackH   = tracker ? Math.round(tracker.getBoundingClientRect().height) : 76;
   const bannerH  = (banner && !banner.classList.contains('hidden'))
-                   ? banner.getBoundingClientRect().height : 0;
+                   ? Math.round(banner.getBoundingClientRect().height) : 0;
 
-  root.style.setProperty('--navbar-h',      `${navH}px`);
-  root.style.setProperty('--tracker-h',     `${trackH}px`);
-  // content padding-top = navbar + tracker + optional banner
-  root.style.setProperty('--header-total',  `${navH + trackH + bannerH + 8}px`);
-  // banner always sits right below tracker
-  root.style.setProperty('--banner-top',    `${navH + trackH}px`);
+  // Only update CSS custom properties if dimensions actually changed
+  if (Math.abs(navH - cachedNavH) > 1 || Math.abs(trackH - cachedTrackH) > 1 || Math.abs(bannerH - cachedBannerH) > 1) {
+    cachedNavH = navH;
+    cachedTrackH = trackH;
+    cachedBannerH = bannerH;
+    root.style.setProperty('--navbar-h',      `${navH}px`);
+    root.style.setProperty('--tracker-h',     `${trackH}px`);
+    root.style.setProperty('--header-total',  `${navH + trackH + bannerH + 8}px`);
+    root.style.setProperty('--banner-top',    `${navH + trackH}px`);
+  }
 }
 
-// Also call whenever banner visibility changes
+// Call whenever banner visibility or steps change
 function syncHeaderVarsDelayed() {
-  // Wait one frame so the DOM has painted new heights
   requestAnimationFrame(syncHeaderVars);
 }
 
@@ -551,101 +557,117 @@ function stopBirthdaySong() {
 }
 
 // =====================================================
-// 2. CUSTOM CURSOR & CANVAS PARTICLES
+// 2. CUSTOM CURSOR & CANVAS PARTICLES (OPTIMIZED)
 // =====================================================
 const cursor = document.getElementById('cursor');
 const cursorFollower = document.getElementById('cursorFollower');
-let mouseX = 0, mouseY = 0;
-let followerX = 0, followerY = 0;
+const isCoarsePointer = window.matchMedia('(pointer: coarse)').matches;
 
-document.addEventListener('mousemove', e => {
-  mouseX = e.clientX;
-  mouseY = e.clientY;
-  if (cursor) {
-    cursor.style.left = mouseX + 'px';
-    cursor.style.top = mouseY + 'px';
-  }
-});
+if (!isCoarsePointer) {
+  let mouseX = -100, mouseY = -100;
+  let followerX = -100, followerY = -100;
 
-function animateCursorFollower() {
-  if (window.matchMedia('(pointer: coarse)').matches) return;
-  const dx = mouseX - followerX;
-  const dy = mouseY - followerY;
-  if (Math.abs(dx) > 0.4 || Math.abs(dy) > 0.4) {
-    followerX += dx * 0.16;
-    followerY += dy * 0.16;
-    if (cursorFollower) {
-      cursorFollower.style.left = followerX + 'px';
-      cursorFollower.style.top = followerY + 'px';
+  document.addEventListener('mousemove', e => {
+    mouseX = e.clientX;
+    mouseY = e.clientY;
+    if (cursor) {
+      cursor.style.left = mouseX + 'px';
+      cursor.style.top = mouseY + 'px';
     }
+  }, { passive: true });
+
+  function animateCursorFollower() {
+    const dx = mouseX - followerX;
+    const dy = mouseY - followerY;
+    if (Math.abs(dx) > 0.4 || Math.abs(dy) > 0.4) {
+      followerX += dx * 0.16;
+      followerY += dy * 0.16;
+      if (cursorFollower) {
+        cursorFollower.style.left = followerX + 'px';
+        cursorFollower.style.top = followerY + 'px';
+      }
+    }
+    requestAnimationFrame(animateCursorFollower);
   }
-  requestAnimationFrame(animateCursorFollower);
-}
-animateCursorFollower();
+  animateCursorFollower();
 
-function bindHoverCursors() {
-  if (window.matchMedia('(pointer: coarse)').matches) return;
-  document.querySelectorAll('a, button, .game-card, .quiz-opt, .polaroid, .gift-card, .scratch-card-box, .level-btn').forEach(el => {
-    el.addEventListener('mouseenter', () => {
-      if (cursor) cursor.style.transform = 'translate(-50%,-50%) scale(2)';
-      if (cursorFollower) {
-        cursorFollower.style.transform = 'translate(-50%,-50%) scale(1.2)';
-        cursorFollower.style.borderColor = 'var(--pink)';
-      }
+  function bindHoverCursors() {
+    document.querySelectorAll('a, button, .game-card, .quiz-opt, .polaroid, .gift-card, .scratch-card-box, .level-btn').forEach(el => {
+      el.addEventListener('mouseenter', () => {
+        if (cursor) cursor.style.transform = 'translate(-50%,-50%) scale(2)';
+        if (cursorFollower) {
+          cursorFollower.style.transform = 'translate(-50%,-50%) scale(1.2)';
+          cursorFollower.style.borderColor = 'var(--pink)';
+        }
+      }, { passive: true });
+      el.addEventListener('mouseleave', () => {
+        if (cursor) cursor.style.transform = 'translate(-50%,-50%) scale(1)';
+        if (cursorFollower) {
+          cursorFollower.style.transform = 'translate(-50%,-50%) scale(1)';
+          cursorFollower.style.borderColor = 'rgba(168,85,247,0.6)';
+        }
+      }, { passive: true });
     });
-    el.addEventListener('mouseleave', () => {
-      if (cursor) cursor.style.transform = 'translate(-50%,-50%) scale(1)';
-      if (cursorFollower) {
-        cursorFollower.style.transform = 'translate(-50%,-50%) scale(1)';
-        cursorFollower.style.borderColor = 'rgba(168,85,247,0.6)';
-      }
-    });
-  });
+  }
+  bindHoverCursors();
 }
-bindHoverCursors();
 
-// Canvas Stars & Confetti - Optimized
+// Canvas Stars & Confetti - Ultra High Performance
 const canvas = document.getElementById('bgCanvas');
-const ctx = canvas.getContext('2d');
+const ctx = canvas ? canvas.getContext('2d', { alpha: true }) : null;
 let stars = [];
 let confettiParticles = [];
 let isConfettiActive = false;
+let confettiRafId = null;
 
 function resizeCanvas() {
-  canvas.width = window.innerWidth;
-  canvas.height = window.innerHeight;
+  if (!canvas || !ctx) return;
+  const dpr = Math.min(window.devicePixelRatio || 1, 2);
+  const w = window.innerWidth;
+  const h = window.innerHeight;
+  canvas.width = w * dpr;
+  canvas.height = h * dpr;
+  canvas.style.width = w + 'px';
+  canvas.style.height = h + 'px';
+  ctx.resetTransform();
+  ctx.scale(dpr, dpr);
+  createStars(w, h);
+  drawStaticStars(w, h);
 }
-resizeCanvas();
-window.addEventListener('resize', resizeCanvas);
 
-function createStars() {
+function createStars(w, h) {
   stars = [];
-  const starCount = window.innerWidth < 768 ? 35 : 60;
+  const starCount = w < 768 ? 35 : 65;
   for (let i = 0; i < starCount; i++) {
     stars.push({
-      x: Math.random() * canvas.width,
-      y: Math.random() * canvas.height,
+      x: Math.random() * w,
+      y: Math.random() * h,
       r: Math.random() * 1.5 + 0.5,
-      alpha: Math.random() * 0.7 + 0.1,
-      speed: Math.random() * 0.008 + 0.003,
-      twinkleDir: Math.random() > 0.5 ? 1 : -1,
+      alpha: Math.random() * 0.7 + 0.2,
     });
   }
 }
-createStars();
 
-function drawStars() {
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
+function drawStaticStars(w, h) {
+  if (!ctx || !canvas) return;
+  const width = w || window.innerWidth;
+  const height = h || window.innerHeight;
+  ctx.clearRect(0, 0, width, height);
   for (let i = 0; i < stars.length; i++) {
     const s = stars[i];
-    s.alpha += s.speed * s.twinkleDir;
-    if (s.alpha >= 0.85 || s.alpha <= 0.1) s.twinkleDir *= -1;
     ctx.beginPath();
     ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
     ctx.fillStyle = `rgba(255,255,255,${s.alpha})`;
     ctx.fill();
   }
 }
+
+resizeCanvas();
+let resizeCanvasTimer;
+window.addEventListener('resize', () => {
+  clearTimeout(resizeCanvasTimer);
+  resizeCanvasTimer = setTimeout(resizeCanvas, 150);
+}, { passive: true });
 
 function triggerCongratsConfetti() {
   createConfetti();
@@ -654,37 +676,52 @@ function triggerCongratsConfetti() {
 }
 
 function createConfetti() {
+  if (!canvas || !ctx) return;
+  const w = window.innerWidth;
   confettiParticles = [];
   isConfettiActive = true;
   const colors = ['#ff5e98', '#a855f7', '#06b6d4', '#fbbf24', '#10b981', '#f43f5e', '#3b82f6'];
-  for (let i = 0; i < 220; i++) {
+  const count = w < 768 ? 80 : 160;
+  for (let i = 0; i < count; i++) {
     confettiParticles.push({
-      x: Math.random() * canvas.width,
+      x: Math.random() * w,
       y: -30,
-      w: Math.random() * 14 + 6,
+      w: Math.random() * 12 + 6,
       h: Math.random() * 8 + 4,
       color: colors[Math.floor(Math.random() * colors.length)],
       speedY: Math.random() * 4.5 + 2.5,
       speedX: (Math.random() - 0.5) * 4,
       rotation: Math.random() * 360,
       rotationSpeed: (Math.random() - 0.5) * 9,
-      opacity: 1,
     });
   }
+  
+  if (!confettiRafId) {
+    confettiRafId = requestAnimationFrame(animateConfettiLoop);
+  }
+
   setTimeout(() => {
     isConfettiActive = false;
     confettiParticles = [];
-  }, 6000);
+    if (confettiRafId) {
+      cancelAnimationFrame(confettiRafId);
+      confettiRafId = null;
+    }
+    drawStaticStars();
+  }, 5000);
 }
 
 function drawConfetti() {
+  if (!ctx) return;
+  const w = window.innerWidth;
+  const h = window.innerHeight;
   confettiParticles.forEach((p) => {
     p.y += p.speedY;
     p.x += p.speedX;
     p.rotation += p.rotationSpeed;
-    if (p.y > canvas.height + 30) {
+    if (p.y > h + 30) {
       p.y = -20;
-      p.x = Math.random() * canvas.width;
+      p.x = Math.random() * w;
     }
     ctx.save();
     ctx.translate(p.x, p.y);
@@ -695,12 +732,14 @@ function drawConfetti() {
   });
 }
 
-function animateCanvas() {
-  drawStars();
-  if (isConfettiActive) drawConfetti();
-  requestAnimationFrame(animateCanvas);
+function animateConfettiLoop() {
+  if (!isConfettiActive) return;
+  const w = window.innerWidth;
+  const h = window.innerHeight;
+  drawStaticStars(w, h);
+  drawConfetti();
+  confettiRafId = requestAnimationFrame(animateConfettiLoop);
 }
-animateCanvas();
 
 // =====================================================
 // 3. INTERACTIVE BIRTHDAY CAKE & CANDLE BLOWING
@@ -1551,6 +1590,8 @@ function initScratchCards() {
     }
     fillOverlay();
 
+    let scratchStrokeCount = 0;
+
     function scratch(x, y) {
       ctx.globalCompositeOperation = 'destination-out';
       ctx.beginPath();
@@ -1559,22 +1600,27 @@ function initScratchCards() {
 
       if (hint) hint.style.display = 'none';
 
-      // Check scratched percentage
-      if (!isRevealed) {
+      // Check scratched percentage throttled (once every 12 moves or on release)
+      scratchStrokeCount++;
+      if (!isRevealed && scratchStrokeCount % 12 === 0) {
         checkScratched();
       }
     }
 
     function checkScratched() {
+      if (isRevealed) return;
       try {
         const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
         const data = imgData.data;
         let transparentPixels = 0;
-        for (let j = 3; j < data.length; j += 4) {
+        const total = (canvas.width * canvas.height);
+        // Sample every 4th pixel for 4x faster calculation
+        for (let j = 3; j < data.length; j += 16) {
           if (data[j] === 0) transparentPixels++;
         }
-        const pct = transparentPixels / (canvas.width * canvas.height);
-        if (pct > 0.42) {
+        const sampledTotal = total / 4;
+        const pct = transparentPixels / sampledTotal;
+        if (pct > 0.38) {
           isRevealed = true;
           scratchCardsRevealed[i - 1] = true;
           canvas.style.transition = 'opacity 0.6s ease';
@@ -1601,7 +1647,10 @@ function initScratchCards() {
       scratch(e.clientX - rect.left, e.clientY - rect.top);
     });
 
-    window.addEventListener('mouseup', () => { isDrawing = false; });
+    window.addEventListener('mouseup', () => { 
+      if (isDrawing && !isRevealed) checkScratched();
+      isDrawing = false; 
+    });
 
     // Touch events for mobile
     canvas.addEventListener('touchstart', e => {
@@ -1619,7 +1668,10 @@ function initScratchCards() {
       scratch(touch.clientX - rect.left, touch.clientY - rect.top);
     }, { passive: false });
 
-    canvas.addEventListener('touchend', () => { isDrawing = false; });
+    canvas.addEventListener('touchend', () => { 
+      if (isDrawing && !isRevealed) checkScratched();
+      isDrawing = false; 
+    });
   }
 }
 
@@ -2259,14 +2311,19 @@ function claimCouponAndOpenStore() {
 }
 
 // =====================================================
-// 9. SCROLL OBSERVER, NAVBAR & TOASTS
+// 9. SCROLL OBSERVER, NAVBAR & TOASTS (OPTIMIZED)
 // =====================================================
 const navbar = document.getElementById('navbar');
 const hamburger = document.getElementById('hamburger');
 
+let isNavScrolled = false;
 window.addEventListener('scroll', () => {
-  if (navbar) navbar.classList.toggle('scrolled', window.scrollY > 40);
-});
+  const scrolled = window.scrollY > 40;
+  if (scrolled !== isNavScrolled) {
+    isNavScrolled = scrolled;
+    if (navbar) navbar.classList.toggle('scrolled', scrolled);
+  }
+}, { passive: true });
 
 if (hamburger) {
   hamburger.addEventListener('click', () => {
@@ -2294,28 +2351,25 @@ document.querySelectorAll('[data-scroll]').forEach(el => scrollObserver.observe(
 // Helper: re-trigger scroll animations for elements in a newly shown step
 function revealStepScrollItems(stepEl) {
   if (!stepEl) return;
-  // Unobserve & re-observe so IntersectionObserver fires fresh
   stepEl.querySelectorAll('[data-scroll]').forEach(el => {
     el.classList.remove('visible');
     scrollObserver.unobserve(el);
-    // Small delay ensures element is visible in DOM before re-observing
     requestAnimationFrame(() => scrollObserver.observe(el));
   });
 }
 
-// Floating hero balloons - Optimized
+// Floating hero balloons - Optimized & scoped
 const heroBalloonsContainer = document.getElementById('balloons');
 const heroBalloonEmojis = ['🎈', '🎀', '🌟', '🎊', '💜', '🌸', '✨', '🎁', '🧁'];
 
 function spawnHeroBalloon() {
-  if (!heroBalloonsContainer) return;
-  // Cap max balloons to prevent DOM accumulation
-  if (heroBalloonsContainer.children.length >= 6) return;
+  if (!heroBalloonsContainer || currentStep !== 1 || document.hidden) return;
+  if (heroBalloonsContainer.children.length >= 5) return;
 
   const el = document.createElement('div');
   el.className = 'balloon';
   el.textContent = heroBalloonEmojis[Math.floor(Math.random() * heroBalloonEmojis.length)];
-  el.style.left = Math.random() * 92 + '%';
+  el.style.left = (Math.random() * 88 + 6) + '%';
   el.style.fontSize = (Math.random() * 1.2 + 1.2) + 'rem';
   const duration = Math.random() * 6 + 10;
   el.style.animationDuration = duration + 's';
@@ -2323,7 +2377,7 @@ function spawnHeroBalloon() {
   setTimeout(() => { if (el.parentNode) el.remove(); }, duration * 1000);
 }
 spawnHeroBalloon();
-setInterval(spawnHeroBalloon, 3500);
+setInterval(spawnHeroBalloon, 4000);
 
 // Toast
 const toastEl = document.getElementById('toast');
@@ -2370,34 +2424,16 @@ window.addEventListener('DOMContentLoaded', () => {
   // Initial journey tracker render
   updateJourneyTracker();
 
-  // Sync CSS header height vars on first load (after fonts/layout settle)
+  // Sync CSS header height vars on initial load
   requestAnimationFrame(() => {
     syncHeaderVars();
-    // Second pass after 300ms in case fonts shift layout
-    setTimeout(syncHeaderVars, 300);
+    setTimeout(syncHeaderVars, 250);
   });
 
-  // Re-sync on window resize / orientation change
+  // Re-sync on window resize / orientation change (debounced)
   let resizeTimer;
   window.addEventListener('resize', () => {
     clearTimeout(resizeTimer);
-    resizeTimer = setTimeout(syncHeaderVars, 80);
-  });
-
-  // Re-sync when navbar compresses on scroll
-  window.addEventListener('scroll', () => {
-    syncHeaderVars();
+    resizeTimer = setTimeout(syncHeaderVars, 150);
   }, { passive: true });
-
-  // Watch the journey tracker element for height changes
-  if (window.ResizeObserver) {
-    const trackerEl = document.getElementById('journeyTracker');
-    if (trackerEl) {
-      new ResizeObserver(syncHeaderVars).observe(trackerEl);
-    }
-    const navbarEl = document.getElementById('navbar');
-    if (navbarEl) {
-      new ResizeObserver(syncHeaderVars).observe(navbarEl);
-    }
-  }
 });
