@@ -2595,6 +2595,7 @@ img, svg {
 .wish-content {
   text-align: center;
   max-width: 680px;
+  margin: 0 auto;
   z-index: 2;
 }
 
