@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Happy Birthday Riya! 🎉 | VIP Birthday Studio</title>
-  <meta name="description" content="A unique, hyper-interactive birthday celebration for the most talented graphic designer — with a ₹500 Gift Vault, creative games, memories, and so much more!" />
+  <meta name="description" content="A unique, hyper-interactive birthday celebration for the most talented graphic designer — with a Mystery Gift Vault, creative games, memories, and so much more!" />
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=Outfit:wght@300;400;600;700;800;900&family=Pacifico&family=Dancing+Script:wght@700&display=swap" rel="stylesheet">
@@ -36,7 +36,7 @@
       <li><a href="#hero" data-step="1">Home</a></li>
       <li><a href="#cake" data-step="2">Candle 🔒</a></li>
       <li><a href="#games" data-step="3">Studio Games 🔒</a></li>
-      <li><a href="#gifts" class="nav-gift-link" data-step="4">🎁 Gift Store 🔒 <span class="budget-pill" id="navBudgetPill">₹500 Left</span></a></li>
+      <li><a href="#gifts" class="nav-gift-link" data-step="4">🎁 Gift Store 🔒 <span class="budget-pill locked" id="navBudgetPill">🔒 Locked</span></a></li>
       <li><a href="#coupons" data-step="5">VIP Perks 🔒</a></li>
       <li><a href="#memories" data-step="6">Memories 🔒</a></li>
       <li><a href="#devcompliments" data-step="7">AI Magic 🔒</a></li>
@@ -122,7 +122,7 @@
             <span class="step-status-chip">🔒</span>
           </button>
 
-          <button class="journey-step-btn locked" data-step="4" onclick="navigateToStep(4)" title="Step 4: ₹500 Birthday Gift Vault">
+          <button class="journey-step-btn locked" data-step="4" onclick="navigateToStep(4)" title="Step 4: Mystery Birthday Gift Vault">
             <span class="step-num-bubble">4</span>
             <span class="step-btn-content">
               <span class="step-icon">🎁</span>
@@ -192,7 +192,7 @@
         You paint the world with colour, shape stories with every pixel, and make everything 
         around you breathtakingly beautiful. Today, your universe celebrates <em>you</em>.
         Blow digital candles, play creative mini-games, unbox memories, and 
-        <strong>claim real gifts from your ₹500 birthday shopping spree!</strong> 🎁
+        <strong>unlock the secret gift vault & claim real birthday surprises!</strong> 🎁
       </p>
 
       <!-- Live Friendship Stats Banner -->
@@ -215,7 +215,7 @@
           </div>
           <div class="counter-divider"></div>
           <div class="counter-item">
-            <span class="counter-val" id="uptimeBudget">₹500</span>
+            <span class="counter-val" id="uptimeBudget"><span style="font-size:0.85em; opacity:0.85;">🔒 Step 4</span></span>
             <span class="counter-lbl">Birthday Gift Budget</span>
           </div>
           <div class="counter-divider"></div>
@@ -335,14 +335,14 @@
     </div>
   </section>
 
-  <!-- ==================== ₹500 GIFT VAULT & MART ==================== -->
+  <!-- ==================== BIRTHDAY GIFT VAULT & MART ==================== -->
   <section id="gifts" class="gifts-section journey-step">
     <div class="gift-bg-glow"></div>
     <div class="section-header" data-scroll>
       <div class="section-badge luxury-badge">🛍️ Birthday Shopping Spree</div>
-      <h2 class="section-title">The ₹500 <span class="gradient-text">Birthday Gift Vault</span></h2>
-      <p class="section-sub">
-        No boring generic code here. Pick whatever you love up to <strong>₹500 INR</strong>. 
+      <h2 class="section-title" id="giftVaultSectionTitle">The Secret <span class="gradient-text">Birthday Gift Vault</span></h2>
+      <p class="section-sub" id="giftVaultSectionSub">
+        No boring generic code here. Complete the studio games to reveal your sponsored birthday shopping budget! 
         Submit your order, and your friend will receive it on WhatsApp & deliver it to you! 🎁
       </p>
     </div>
@@ -779,7 +779,7 @@
             <h3>Creative Champion!</h3>
             <p id="balloonWinText"></p>
             <div class="star-rating">⭐⭐⭐</div>
-            <button class="btn btn-primary" onclick="showCouponModal()">🎁 Claim Your ₹500 Birthday Coupon! →</button>
+            <button class="btn btn-primary" onclick="showCouponModal()">🎁 Claim & Reveal Your Birthday Spree! →</button>
           </div>
         </div>
       </div>
@@ -925,9 +925,9 @@
       <button class="modal-close-btn" onclick="closeCheckoutModal()">✕</button>
       
       <div class="modal-header">
-        <div class="modal-badge">🎫 GOLDEN BIRTHDAY ORDER TICKET</div>
-        <h3>Claim Your ₹500 Birthday Gifts!</h3>
-        <p>Fill in where to deliver or how you want to receive these gifts. We'll generate an instant WhatsApp dispatch message!</p>
+        <div class="modal-badge">🛍️ DIRECT CHECKOUT</div>
+        <h3 id="checkoutModalTitle">Claim Your Birthday Gifts!</h3>
+        <p class="modal-sub">Confirm your shipping address below. Your friend will receive the order details & fulfill it 100% free for you!</p>
       </div>
 
       <div class="order-preview-box" id="checkoutOrderPreview">
@@ -1102,7 +1102,7 @@
       <p class="footer-tagline">Crafted with ❤️, creative passion, and endless love for the most beautiful soul on Earth.</p>
       <div class="footer-links">
         <a href="#hero">Top</a> • 
-        <a href="#gifts">₹500 Vault</a> • 
+        <a href="#gifts">Gift Vault</a> • 
         <a href="#cake">Blow Candle</a> • 
         <a href="#games">Studio Games</a> • 
         <a href="javascript:void(0)" onclick="openTerminal()">Creative Console</a>

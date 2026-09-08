@@ -196,12 +196,23 @@ const STEP_METADATA = [
   { step: 1, id: 'hero', name: 'Home', title: 'Step 1: Welcome Home 🌸' },
   { step: 2, id: 'cake', name: 'Candle', title: 'Step 2: Interactive Cake & Candle Ritual 🎂' },
   { step: 3, id: 'games', name: 'Studio', title: 'Step 3: Creative Studio Games 🎨' },
-  { step: 4, id: 'gifts', name: 'Gift Vault', title: 'Step 4: ₹500 Birthday Gift Vault 🎁' },
+  { step: 4, id: 'gifts', name: 'Gift Vault', title: 'Step 4: Mystery Birthday Gift Vault 🎁' },
   { step: 5, id: 'coupons', name: 'VIP Perks', title: 'Step 5: Scratch & Win VIP Friendship Perks 🎟️' },
   { step: 6, id: 'step-memories', name: 'Memories', title: 'Step 6: Our Story & Memories 📸' },
   { step: 7, id: 'devcompliments', name: 'AI Magic', title: 'Step 7: AI Creative Compliment Oracle ✨' },
   { step: 8, id: 'wish', name: 'Grand Wish', title: 'Step 8: Grand Wish & Final Letter 💌' }
 ];
+
+function getStepTitle(stepNum) {
+  const isClaimed = localStorage.getItem('giftVaultCheckedOut') === 'true';
+  if (stepNum === 4) {
+    if (isClaimed) return 'Step 4: Birthday Gift Vault (Claimed ✅) 🎁';
+    if (maxUnlockedStep >= 4) return 'Step 4: ₹500 Birthday Gift Vault 🎁';
+    return 'Step 4: Mystery Birthday Gift Vault 🎁';
+  }
+  const meta = STEP_METADATA.find(m => m.step === stepNum);
+  return meta ? meta.title : `Step ${stepNum}`;
+}
 
 const stepIds = {
   1: 'hero',
@@ -221,13 +232,24 @@ if (localStorage.getItem('maxUnlockedStep')) {
   if (maxUnlockedStep > totalSteps) maxUnlockedStep = totalSteps;
 }
 
+function syncHeroBudgetStat() {
+  const budgetEl = document.getElementById('uptimeBudget');
+  if (!budgetEl) return;
+  const isClaimed = localStorage.getItem('giftVaultCheckedOut') === 'true';
+  if (isClaimed) {
+    budgetEl.innerHTML = '<span class="text-gold">Claimed ✅</span>';
+  } else if (maxUnlockedStep >= 4) {
+    budgetEl.innerHTML = '<span class="text-gold">₹500</span>';
+  } else {
+    budgetEl.innerHTML = '<span style="font-size:0.85em; opacity:0.85; color: var(--gold);">🔒 Step 4</span>';
+  }
+}
+
 function updateJourneyTracker() {
-  const currentMeta = STEP_METADATA.find(m => m.step === currentStep) || STEP_METADATA[0];
-  
   // Update Header Text
   const titleEl = document.getElementById('journeyCurrentStepName');
   if (titleEl) {
-    titleEl.textContent = currentMeta.title;
+    titleEl.textContent = getStepTitle(currentStep);
   }
 
   // Update Completion Percentage
@@ -252,6 +274,10 @@ function updateJourneyTracker() {
     
     btn.classList.remove('active', 'completed', 'unlocked', 'locked');
 
+    if (s === 4) {
+      btn.setAttribute('title', maxUnlockedStep >= 4 ? (isClaimed ? 'Step 4: Birthday Gift Vault (Claimed)' : 'Step 4: ₹500 Birthday Gift Vault') : 'Step 4: Mystery Birthday Gift Vault');
+    }
+
     if (s === currentStep) {
       btn.classList.add('active');
       if (chip) chip.textContent = 'Active';
@@ -273,6 +299,7 @@ function updateJourneyTracker() {
     }
   });
 
+  syncHeroBudgetStat();
   updateNavbarLocks();
 }
 
@@ -451,14 +478,16 @@ function updateNavbarLocks() {
     if (s <= maxUnlockedStep) {
       link.classList.remove('locked');
       if (s === 4) {
-        link.innerHTML = `🎁 Gift Store ${isClaimed ? '<span class="budget-pill claimed">Claimed ✅</span>' : '<span class="budget-pill" id="navBudgetPill">₹500 Left</span>'}`;
+        const total = calculateCartTotal();
+        const rem = MAX_BUDGET - total;
+        link.innerHTML = `🎁 Gift Store ${isClaimed ? '<span class="budget-pill claimed">Claimed ✅</span>' : `<span class="budget-pill" id="navBudgetPill">₹${rem} Left</span>`}`;
       } else {
         link.textContent = label;
       }
     } else {
       link.classList.add('locked');
       if (s === 4) {
-        link.innerHTML = `🎁 Gift Store 🔒 ${isClaimed ? '<span class="budget-pill claimed">Claimed ✅</span>' : '<span class="budget-pill" id="navBudgetPill">₹500 Left</span>'}`;
+        link.innerHTML = `🎁 Gift Store 🔒 ${isClaimed ? '<span class="budget-pill claimed">Claimed ✅</span>' : '<span class="budget-pill locked" id="navBudgetPill">🔒 Locked</span>'}`;
       } else {
         link.textContent = label + ' 🔒';
       }
@@ -1211,7 +1240,26 @@ function updateBudgetAndCartUI() {
 
     renderClaimedVaultView();
     renderGiftCatalog();
+    syncHeroBudgetStat();
     return;
+  }
+
+  // Update section title & subtitle dynamically based on unlock status
+  const titleEl = document.getElementById('giftVaultSectionTitle');
+  const subEl = document.getElementById('giftVaultSectionSub');
+  if (titleEl) {
+    if (maxUnlockedStep >= 4 || claimed) {
+      titleEl.innerHTML = 'The ₹500 <span class="gradient-text">Birthday Gift Vault</span>';
+    } else {
+      titleEl.innerHTML = 'The Secret <span class="gradient-text">Birthday Gift Vault</span>';
+    }
+  }
+  if (subEl) {
+    if (maxUnlockedStep >= 4 || claimed) {
+      subEl.innerHTML = 'No boring generic stuff here. Pick whatever you love up to <strong>₹500 INR</strong>. Submit your order, and your friend will receive it on WhatsApp & deliver it to you! 🎁';
+    } else {
+      subEl.innerHTML = 'Complete the creative games in Step 3 to reveal your secret budget and claim real birthday surprises! 🎁';
+    }
   }
 
   // Not claimed - active shopping spree
@@ -1234,9 +1282,15 @@ function updateBudgetAndCartUI() {
     progressEl.classList.toggle('maxed', total === MAX_BUDGET);
   }
   if (navPill) {
-    navPill.textContent = `₹${remaining} Left`;
-    navPill.classList.remove('claimed');
+    if (maxUnlockedStep >= 4) {
+      navPill.textContent = `₹${remaining} Left`;
+      navPill.className = 'budget-pill';
+    } else {
+      navPill.textContent = '🔒 Locked';
+      navPill.className = 'budget-pill locked';
+    }
   }
+  syncHeroBudgetStat();
 
   if (alertEl) {
     if (total === 0) {
@@ -1753,17 +1807,21 @@ const TERMINAL_COMMANDS = {
 [✔] Palette inspired by your incredible aesthetic sense! 🌸
 `;
   },
-  'cat friendship.json': () => `
+  'cat friendship.json': () => {
+    const isClaimed = localStorage.getItem('giftVaultCheckedOut') === 'true';
+    const vaultBal = maxUnlockedStep >= 4 ? (isClaimed ? '"Claimed (₹0.00)"' : '"₹500.00 INR"') : '"🔒 Locked (Complete Step 3)"';
+    return `
 {
   <span class="term-highlight">"bff_status"</span>: "PERMANENT_UNCONDITIONAL",
   <span class="term-highlight">"compatibility"</span>: 100.0,
   <span class="term-highlight">"favorite_activities"</span>: ["Moodboarding", "Chai runs", "Roasting everyone", "Late night chats"],
   <span class="term-highlight">"riya_talents"</span>: ["Colour theory", "Typography", "Illustration", "Making everything beautiful"],
   <span class="term-highlight">"shared_secrets"</span>: "ENCRYPTED_AES256_SAFE",
-  <span class="term-highlight">"gift_vault_balance"</span>: "₹500.00 INR",
+  <span class="term-highlight">"gift_vault_balance"</span>: ${vaultBal},
   <span class="term-highlight">"uptime"</span>: "100.00% (Zero downtime)"
 }
-`,
+`;
+  },
   'design_story': () => `
 <span class="term-highlight">✦ Riya's Design Origin Story:</span>
 
@@ -2324,7 +2382,11 @@ function showCouponModal() {
   const modal = document.getElementById('couponModalOverlay');
   if (modal) modal.classList.add('active');
   unlockStep(4);
+  updateJourneyTracker();
+  updateBudgetAndCartUI();
   playAudioFx('fanfare');
+  createConfetti();
+  showToast('🎉 Secret Birthday Spree Unlocked! Budget of ₹500 Revealed! 🎁', 5000);
 }
 
 function claimCouponAndOpenStore() {
@@ -2332,6 +2394,7 @@ function claimCouponAndOpenStore() {
   if (modal) modal.classList.remove('active');
   unlockStep(4);
   navigateToStep(4);
+  showToast('🛍️ Welcome to your ₹500 Gift Vault! Pick anything you love!', 4000);
 }
 
 // =====================================================
