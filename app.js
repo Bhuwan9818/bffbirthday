@@ -193,13 +193,13 @@ const totalSteps = 8;
 
 
 const STEP_METADATA = [
-  { step: 1, id: 'hero', name: 'Home', title: 'Step 1: Welcome Home 🎈' },
+  { step: 1, id: 'hero', name: 'Home', title: 'Step 1: Welcome Home 🌸' },
   { step: 2, id: 'cake', name: 'Candle', title: 'Step 2: Interactive Cake & Candle Ritual 🎂' },
-  { step: 3, id: 'games', name: 'Arcade', title: 'Step 3: 3-Level Birthday Arcade 🕹️' },
+  { step: 3, id: 'games', name: 'Studio', title: 'Step 3: Creative Studio Games 🎨' },
   { step: 4, id: 'gifts', name: 'Gift Vault', title: 'Step 4: ₹500 Birthday Gift Vault 🎁' },
   { step: 5, id: 'coupons', name: 'VIP Perks', title: 'Step 5: Scratch & Win VIP Friendship Perks 🎟️' },
-  { step: 6, id: 'step-memories', name: 'Memories', title: 'Step 6: Time Capsule & Memories 📸' },
-  { step: 7, id: 'devcompliments', name: 'AI Roast', title: 'Step 7: AI Dev Compliment & Roast Machine 🤖' },
+  { step: 6, id: 'step-memories', name: 'Memories', title: 'Step 6: Our Story & Memories 📸' },
+  { step: 7, id: 'devcompliments', name: 'AI Magic', title: 'Step 7: AI Creative Compliment Oracle ✨' },
   { step: 8, id: 'wish', name: 'Grand Wish', title: 'Step 8: Grand Wish & Final Letter 💌' }
 ];
 
@@ -910,31 +910,31 @@ const GIFT_CATALOG = [
     price: 220,
     badge: '⭐ Daily Fuel',
     emoji: '☕',
-    desc: 'Rich gourmet chilled brew paired with crunchy artisanal cookies for late-night inspiration.'
+    desc: 'Rich gourmet chilled brew paired with crunchy artisanal cookies for late-night creative sessions.'
   },
   {
     id: 'chocolates',
     title: 'Belgian Truffle Chocolate Box',
     price: 350,
-    badge: '🍫 Sweet Tooth',
+    badge: '🍫 Sweet Indulgence',
     emoji: '🍫',
-    desc: 'Assorted handcrafted luxury dark & milk Belgian pralines that melt in your mouth.'
+    desc: 'Assorted handcrafted luxury dark & milk Belgian pralines — because creative work deserves sweet rewards.'
   },
   {
-    id: 'bestseller_book',
-    title: 'Bestseller Book / Manga of Choice',
+    id: 'sketchbook',
+    title: 'Premium Sketchbook + Fineliner Set',
     price: 380,
-    badge: '📚 Page Turner',
-    emoji: '📖',
-    desc: 'Any sci-fi, fantasy, tech, or manga paperback title you’ve been dying to read next.'
+    badge: '🖊️ Artist\'s Pick',
+    emoji: '📓',
+    desc: 'Luxe A4 hardcover sketchbook + 6 Micron fineliners in a gorgeous gift set for your next big idea.'
   },
   {
     id: 'desk_plant',
     title: 'Aesthetic Desk Plant / Succulent',
     price: 250,
-    badge: '🌿 Chill Vibe',
+    badge: '🌿 Studio Vibe',
     emoji: '🪴',
-    desc: 'A gorgeous easy-care green succulent in a minimalist ceramic pot to elevate your desk setup.'
+    desc: 'A gorgeous easy-care green succulent in a minimalist ceramic pot to elevate your creative studio.'
   },
   {
     id: 'pizza_craving',
@@ -942,7 +942,7 @@ const GIFT_CATALOG = [
     price: 400,
     badge: '🍕 Midnight Craving',
     emoji: '🍕',
-    desc: 'Cheesy hot pizza of your choice delivered whenever the next 1 AM craving hits!'
+    desc: 'Cheesy hot pizza of your choice delivered whenever the next 1 AM inspiration hits!'
   },
   {
     id: 'scented_candle',
@@ -950,15 +950,23 @@ const GIFT_CATALOG = [
     price: 290,
     badge: '🌸 Zen Aura',
     emoji: '🕯️',
-    desc: 'Soothing aromatherapy soy candle + warm starry fairy lights for cozy evenings.'
+    desc: 'Soothing aromatherapy soy candle + warm starry fairy lights for a cozy, inspiring creative space.'
   },
   {
     id: 'movie_combo',
     title: 'Movie Ticket + Tub of Caramel Popcorn',
     price: 350,
-    badge: '🎬 Blockbuster',
+    badge: '🎬 Blockbuster Date',
     emoji: '🍿',
     desc: 'One ticket to your most anticipated cinema release + giant tub of sweet crunchy popcorn.'
+  },
+  {
+    id: 'procreate_course',
+    title: 'Online Design / Procreate Masterclass',
+    price: 499,
+    badge: '🎨 Level Up',
+    emoji: '📱',
+    desc: 'Access to a premium Skillshare / Udemy design or Procreate masterclass of your choice!'
   },
   {
     id: 'custom_wish',
@@ -1717,74 +1725,97 @@ window.addEventListener('keydown', e => {
 
 const TERMINAL_COMMANDS = {
   help: () => `
-<span class="term-highlight">Available Commands:</span>
-  • <span class="cmd-badge">git log</span>             - View our friendship version history
+<span class="term-highlight">✦ Available Creative Commands:</span>
+  • <span class="cmd-badge">colour_palette</span>     - Generate a stunning birthday colour palette
   • <span class="cmd-badge">cat friendship.json</span> - Print friendship environment config
-  • <span class="cmd-badge">npm run be-awesome</span>   - Execute birthday cheer sequence
-  • <span class="cmd-badge">hack_heart</span>          - Decrypt friendship love cipher
-  • <span class="cmd-badge">matrix</span>              - Run green matrix stream effect
-  • <span class="cmd-badge">sudo love</span>           - Grant root BFF privileges
-  • <span class="cmd-badge">roast</span>               - Generate a friendly developer roast
-  • <span class="cmd-badge">compliment</span>          - Generate a sweet developer compliment
+  • <span class="cmd-badge">design_story</span>        - Read the story behind your designs
+  • <span class="cmd-badge">cast magic</span>          - Cast a special birthday blessing
+  • <span class="cmd-badge">moodboard</span>           - Generate your aesthetic moodboard
+  • <span class="cmd-badge">hype riya</span>           - Run maximum hype sequence
+  • <span class="cmd-badge">compliment</span>          - Generate a sweet designer compliment
+  • <span class="cmd-badge">roast</span>               - Generate a playful creative roast
   • <span class="cmd-badge">claim_gift</span>          - Jump to the ₹500 Gift Vault
   • <span class="cmd-badge">blow_candle</span>         - Extinguish the cake candles
-  • <span class="cmd-badge">clear</span>               - Clear the terminal console
-  • <span class="cmd-badge">exit</span>                - Close the terminal window
+  • <span class="cmd-badge">clear</span>               - Clear the console
+  • <span class="cmd-badge">exit</span>                - Close the creative console
 `,
-  'git log': () => `
-<span class="term-highlight">commit 9fa83bc (HEAD -> main, origin/main)</span>
-Author: Your Best Friend &lt;bff@heart.local&gt;
-Date:   Thu Aug 27 00:00:00 2026 +0530
-    feat: celebrate another year of unstoppable genius and laughs! 🎂
+  'colour_palette': () => {
+    createConfetti();
+    return `
+<span style="color:var(--pink);">✦ Riya Birthday Palette v2026:</span>
 
-<span class="term-highlight">commit 4c82e01</span>
-Author: Your Best Friend &lt;bff@heart.local&gt;
-Date:   Sat May 10 01:23:45 2025 +0530
-    fix: midnight existential crisis resolved via 2AM chai & gossip
+  <span style="background:#f9a8d4; color:#111; padding:2px 8px; border-radius:4px;">#F9A8D4</span> — Petal Pink
+  <span style="background:#c084fc; color:#111; padding:2px 8px; border-radius:4px;">#C084FC</span> — Lavender Dream
+  <span style="background:#fde68a; color:#111; padding:2px 8px; border-radius:4px;">#FDE68A</span> — Golden Hour
+  <span style="background:#6ee7b7; color:#111; padding:2px 8px; border-radius:4px;">#6EE7B7</span> — Mint Bloom
+  <span style="background:#7dd3fc; color:#111; padding:2px 8px; border-radius:4px;">#7DD3FC</span> — Sky Blue
 
-<span class="term-highlight">commit 1b04a9f</span>
-Author: Your Best Friend &lt;bff@heart.local&gt;
-Date:   Wed Jan 15 12:00:00 2020 +0530
-    feat: initial commit (forever friends established)
-`,
+[✔] Palette inspired by your incredible aesthetic sense! 🌸
+`;
+  },
   'cat friendship.json': () => `
 {
   <span class="term-highlight">"bff_status"</span>: "PERMANENT_UNCONDITIONAL",
   <span class="term-highlight">"compatibility"</span>: 100.0,
-  <span class="term-highlight">"favorite_activities"</span>: ["Road trips", "Midnight snacks", "Roasting everyone", "Deep talks"],
+  <span class="term-highlight">"favorite_activities"</span>: ["Moodboarding", "Chai runs", "Roasting everyone", "Late night chats"],
+  <span class="term-highlight">"riya_talents"</span>: ["Colour theory", "Typography", "Illustration", "Making everything beautiful"],
   <span class="term-highlight">"shared_secrets"</span>: "ENCRYPTED_AES256_SAFE",
   <span class="term-highlight">"gift_vault_balance"</span>: "₹500.00 INR",
   <span class="term-highlight">"uptime"</span>: "100.00% (Zero downtime)"
 }
 `,
-  'npm run be-awesome': () => {
+  'design_story': () => `
+<span class="term-highlight">✦ Riya's Design Origin Story:</span>
+
+Once upon a time, a girl with an extraordinary eye for beauty
+looked at the world and saw not what was, but what could be.
+
+She picked up a pencil, then a tablet, then Figma and Procreate...
+and proceeded to make everything around her breathtakingly beautiful.
+
+[✔] That girl is Riya. That story is still being written. 🌸✨
+`,
+  'cast magic': () => {
     createConfetti();
     playAudioFx('fanfare');
     return `
-> bff-universe@2.4.0 be-awesome
-> executing infinite joy and victory fanfare...
+<span style="color:var(--pink);">✦ Casting birthday magic spell...</span>
 
-[OK] 1000 happiness packets dispatched!
-[OK] Birthday Star elevated to highest tier! 🚀✨
+[✔] Creativity multiplied by ∞
+[✔] Dream projects dispatched to your doorstep
+[✔] All bad clients permanently banished
+[✔] Infinite inspiration unlocked
+[✔] HAPPY BIRTHDAY RIYA! 🌸✨🎂
 `;
   },
-  hack_heart: () => {
-    createConfetti();
-    return `
-<span style="color:var(--pink);">
-  [✔] Connecting to BFF mainframe...
-  [✔] Bypassing grumpy firewall...
-  [✔] Injecting unlimited hugs and chai credits...
-  [✔] HACK SUCCESSFUL! You are 100% loved forever! ❤️
-</span>
-`;
-  },
-  'sudo love': () => `
-[sudo] password for bff: **********
-Permission Granted. You have full ROOT administrative control over my time, advice, and snack supply!
+  moodboard: () => `
+<span class="term-highlight">✦ Riya's Aesthetic Moodboard — September 2026:</span>
+
+  🌸 Pastel florals with golden accents
+  ✨ Soft-glow typography on cream linen
+  🎨 Watercolour wash with ink detail
+  🪴 Biophilic studio — plants everywhere
+  ☕ Warm morning light hitting a sketchbook
+
+[✔] Mood: Dreamy but intentional. Beautiful but bold. 💜
 `,
-  roast: () => `🌶️ <span style="color:var(--gold);">Roast:</span> You complain about bugs, yet you still stay up till 3 AM reading code and eating Maggi. You are the final boss of chaos! 😂`,
-  compliment: () => `💖 <span style="color:var(--pink);">Compliment:</span> Your intelligence and humor are the kind of combination they write songs about. Truly 1 in 8 billion! ✨`,
+  'hype riya': () => {
+    createConfetti();
+    playAudioFx('fanfare');
+    return `
+✦ INITIATING MAXIMUM HYPE SEQUENCE FOR RIYA... ✦
+
+[✔] Talent level: EXCEPTIONAL
+[✔] Design eye: ELITE TIER
+[✔] Vibe: IMMACULATE
+[✔] Personality: 100/10 NO NOTES
+[✔] Birthday energy: UNSTOPPABLE
+
+🌸 She ate and left no crumbs. Every single time. 🌸
+`;
+  },
+  roast: () => `🌶️ <span style="color:var(--gold);">Roast:</span> You have 47 Procreate brushes installed and use the same 3 every time. We see you, bestie! 😂`,
+  compliment: () => `💖 <span style="color:var(--pink);">Compliment:</span> Your colour sense is genuinely rare. You see palettes where others see nothing. That's a superpower. ✨`,
   claim_gift: () => {
     closeTerminal();
     document.getElementById('gifts')?.scrollIntoView({ behavior: 'smooth' });
@@ -1792,14 +1823,7 @@ Permission Granted. You have full ROOT administrative control over my time, advi
   },
   blow_candle: () => {
     blowOutCandles();
-    return 'Extinguishing candles on the cake... Done!';
-  },
-  matrix: () => {
-    return `<span style="color:#22c55e;">
-01001000 01100001 01110000 01110000 01111001 00100000 01000010 01101001 
-01110010 01110100 01101000 01100100 01100001 01111001 00100001 
-(Binary translation: Happy Birthday!)
-</span>`;
+    return 'Extinguishing candles on the cake... Done! 🌸';
   },
   clear: () => {
     if (terminalHistory) terminalHistory.innerHTML = '';
@@ -1807,7 +1831,7 @@ Permission Granted. You have full ROOT administrative control over my time, advi
   },
   exit: () => {
     closeTerminal();
-    return 'Goodbye!';
+    return 'Goodbye! Keep creating beautiful things! 🌸';
   }
 };
 
@@ -1823,7 +1847,7 @@ if (terminalInput) {
 
       // Add to output
       const line = document.createElement('div');
-      line.innerHTML = `<span class="term-prompt">bff@birthday-machine:~$</span> ${rawCmd}`;
+      line.innerHTML = `<span class="term-prompt">riya@studio:~$</span> ${rawCmd}`;
       terminalHistory.appendChild(line);
 
       let response;
@@ -1865,22 +1889,22 @@ if (terminalInput) {
 // =====================================================
 const COMPLIMENTS = {
   sweet: [
-    `"You're like clean, well-commented code: extremely rare, deeply appreciated, and universally admired." ✨`,
-    `"If friendship was an open-source repo, you would have 100k GitHub stars and zero open issues!" 🌟`,
-    `"Your smile has a lower latency and higher hit rate than a Redis cache on high-speed memory!" 💖`,
-    `"Thank you for being the most dependable human on Earth. Zero memory leaks, pure unconditional love." 🥂`
+    `"✨ You see beauty in the smallest things — a font weight, a colour swatch, the way morning light hits. That rare sensitivity makes your designs feel like poetry." 🌸`,
+    `"If warmth and creativity had a human form, it would be you. The world is genuinely more beautiful because you exist in it." 💖`,
+    `"Your designs don't just look stunning — they tell stories, spark feelings, and stay with people long after they look away. That's the mark of a true artist." ✨`,
+    `"You bring your whole heart into everything you create. That's what separates good design from unforgettable design. You are unforgettable, Riya." 🌷`
   ],
   roast: [
-    `"You have 47 browser tabs open right now and you know you're not going to read 46 of them." 😂`,
-    `"You say 'I will sleep early today' with the same confidence as someone pushing straight to main without testing." 🌶️`,
-    `"Your debugging strategy is 90% console.log('PLEASE WORK PLEASE') and 10% staring blankly." 😆`,
-    `"You're the only person who can spend 2 hours picking what to watch and fall asleep 5 minutes into the movie." 🍿`
+    `"You have 47 Procreate brushes downloaded and you use the same 3 every time. We all see you." 😂`,
+    `"Your Figma file has layers named 'Final', 'Final v2', 'FINAL ACTUAL', and 'FINAL USE THIS ONE PLS'. Designer of the year!" 🌶️`,
+    `"You spend 45 minutes choosing the perfect font and then go with the one you picked first. True artistic process." 😆`,
+    `"You say 'just one more colour tweak' and then it's suddenly 2 AM and you've redesigned the entire thing. Hero behaviour honestly." 🌙`
   ],
   dev: [
-    `"Status: 200 OK — You are the best exception handling block in my life's try-catch." ⚡`,
-    `"while (true) { cheerForYou(); drinkChai(); celebrate(); }" ☕`,
-    `"const bff = new BestFriend({ loyalty: Infinity, humor: 100, awesomeness: 'MAX' });" 💻`,
-    `"git commit -m 'Fixed all sadness, added unlimited birthday joy'" 🚀`
+    `"Your colour palettes are curated like playlists — every single tone in perfect harmony, saying exactly the right thing." 🎨`,
+    `"If design was a love language, you'd be fluent in all five. Negative space, typography, contrast, layout, and pure aesthetic magic." ❤️`,
+    `"Every pixel you place has a reason. Every curve has intention. You don't just design — you compose visual symphonies." 🎶`,
+    `"Riya.design is the only brand that matters. Lucky the world gets to experience it." 💎`
   ]
 };
 
@@ -1944,7 +1968,7 @@ function unlockNextLevel(nextNum) {
 }
 
 /* LEVEL 1: Memory Card Match */
-const cardEmojis = ['🎂', '🎈', '🎁', '⭐', '🌸', '🦋', '🌈', '💫'];
+const cardEmojis = ['🌸', '🎨', '💎', '✨', '🌷', '🦋', '🌈', '💫'];
 let cards = [...cardEmojis, ...cardEmojis];
 let flipped = [], matched = 0, flips = 0, canFlip = true;
 let gameTimerInterval, gameSeconds = 0;
@@ -2059,27 +2083,27 @@ function restartMemoryGame() {
 const quizData = [
   {
     q: '🌅 Where did our friendship first kick off?',
-    opts: ['At a party 🎉', 'At college / work 🎓', 'Through mutual friends 👥', 'Online / Discord 💻'],
+    opts: ['At a party 🎉', 'At college / work 🎓', 'Through mutual friends 👥', 'Online / Social media 📱'],
     correct: 0,
     fun: 'The most legendary beginning ever!'
   },
   {
-    q: '☕ What is my supreme comfort drink of choice?',
+    q: '☕ What is Riya\'s go-to comfort drink when feeling creative?',
     opts: ['Espresso ☕', 'Kadak Chai 🍵', 'Hot Cocoa 🍫', 'Boba Tea 🧋'],
     correct: 1,
-    fun: 'Chai o\'clock, every single day!'
+    fun: 'Chai o\'clock fuels every masterpiece!'
   },
   {
-    q: '🎬 Which genre guarantees we have a great movie night?',
-    opts: ['Horror 👻', 'Comedy 😂', 'Sci-Fi Mind Benders 🚀', 'Action Thrillers 🍿'],
-    correct: 1,
-    fun: 'Because laughing until our stomachs hurt is mandatory!'
+    q: '🎨 What is Riya\'s absolute design superpower?',
+    opts: ['Colour palettes 🌈', 'Typography 🔤', 'Illustration ✏️', 'Layout & spacing ⬛'],
+    correct: 0,
+    fun: 'Her colour sense is literally unmatched!'
   },
   {
     q: '🌍 My ultimate dream vacation spot is?',
     opts: ['Tokyo, Japan 🇯🇵', 'Amalfi Coast, Italy 🇮🇹', 'Maldives 🏝️', 'Swiss Alps 🏔️'],
     correct: 2,
-    fun: 'Clear water, sun, and zero emails!'
+    fun: 'Clear water, golden sun, and zero deadlines!'
   },
   {
     q: '🍕 What is the uncontested 2 AM midnight food craving?',
@@ -2088,22 +2112,22 @@ const quizData = [
     fun: '2 AM Maggi hits differently every single time!'
   },
   {
-    q: '💪 What is my hidden superpower?',
-    opts: ['Making people laugh 😊', 'Fast typing ⌨️', 'Napping anywhere 😴', 'Finishing web projects fast'],
+    q: '💖 What is Riya\'s hidden superpower?',
+    opts: ['Making everyone feel seen 😊', 'Spotting bad fonts instantly 👀', 'Finishing designs fast ⚡', 'Being everyone\'s mood lifter 🌟'],
     correct: 0,
-    fun: 'Your infectious smile lights up every room!'
+    fun: 'She makes every single person feel valued and beautiful!'
   },
   {
-    q: '🎵 What music vibe rules our road trips?',
-    opts: ['Indie & Acoustic 🎸', 'Bollywood Hits 🎶', 'Synthwave & EDM ⚡', '90s Nostalgia 💿'],
+    q: '🎥 Which kind of movie night guarantees maximum fun?',
+    opts: ['Horror 👻', 'Comedy & Romcom 😂', 'Sci-Fi Mind Bender 🚀', 'True Crime Thriller 🔍'],
+    correct: 1,
+    fun: 'Because laughing until our stomachs hurt is mandatory!'
+  },
+  {
+    q: '🎂 How do we celebrate Riya on her birthday?',
+    opts: ['With all the love 💖', 'Cake, gifts & chaos 🎉', 'Endlessly hype her up ✨', 'All of the above times ten 🙌'],
     correct: 3,
-    fun: 'Nostalgia tracks on full volume with windows down!'
-  },
-  {
-    q: '🎂 How many candles belong on your cake today?',
-    opts: ['Count them yourself! 😆', 'Age is an immutable constant ✨', 'Still forever young 💫', 'Enough to summon fireworks 🔥'],
-    correct: 2,
-    fun: 'Forever young, brilliant, and iconic!'
+    fun: 'She deserves every single bit of it!'
   }
 ];
 
@@ -2181,13 +2205,13 @@ function showQuizWin() {
   playAudioFx('fanfare');
 }
 
-/* LEVEL 3: Balloon Blitz */
+/* LEVEL 3: Balloon Bloom */
 const balloonTypes = [
-  { emoji: '🎈', points: 10, speed: 4.8 },
+  { emoji: '🌸', points: 10, speed: 4.8 },
   { emoji: '🎀', points: 15, speed: 4.0 },
   { emoji: '🌟', points: 20, speed: 3.2 },
-  { emoji: '💜', points: 25, speed: 2.8 },
-  { emoji: '💣', points: -25, speed: 3.5 },
+  { emoji: '💖', points: 25, speed: 2.8 },
+  { emoji: '⛈️', points: -25, speed: 3.5 },
 ];
 
 let balloonScore = 0, balloonPopped = 0;
