@@ -19,10 +19,13 @@
   <!-- Canvas for stars & confetti -->
   <canvas id="bgCanvas"></canvas>
 
-  <!-- Sound Toggle Float Button -->
-  <button class="audio-toggle-btn" id="audioToggle" title="Toggle Sound FX & Audio" aria-label="Toggle Sound">
-    <span id="audioIcon">🔊</span>
-    <span class="audio-label">SFX: ON</span>
+  <!-- Floating Background Music Toggle (ON by default) -->
+  <button class="music-toggle-btn" id="audioToggle" title="Toggle Background Music" aria-label="Toggle Background Music">
+    <span class="music-icon" id="audioIcon">🔊</span>
+    <span class="music-label" id="audioLabel">Music: ON</span>
+    <div class="music-bars" id="musicBars">
+      <span></span><span></span><span></span>
+    </div>
   </button>
 
   <!-- ==================== TOP NAVIGATION ==================== -->
@@ -1094,6 +1097,8 @@
       </div>
     </div>
   </div>
+
+
 
   <!-- ==================== FOOTER ==================== -->
   <footer class="footer">

@@ -12,10 +12,27 @@
 ============================================================ */
 
 // =====================================================
-// 1. SYNTHESIZED WEB AUDIO SFX ENGINE
+// 1. BACKEND CUSTOM AUDIO & SFX ENGINE (ON BY DEFAULT)
 // =====================================================
+// 🎵 BACKEND AUDIO CONFIGURATION:
+// Simply put your audio file in the project folder named 'birthday_song.mp3' (or change filename below)
+const BACKEND_AUDIO_SRC = 'birthday_song.mp3';
+
 let audioCtx = null;
 let soundEnabled = true;
+let bgMusicAudio = null;
+let bgMusicPlaying = false;
+let synthFallbackOsc = null;
+let synthFallbackGain = null;
+let synthFallbackTimeout = null;
+let synthMelodyIndex = 0;
+
+const fallbackMelody = [
+  { note: 261.63, dur: 0.75 }, { note: 261.63, dur: 0.25 }, { note: 293.66, dur: 1 }, { note: 261.63, dur: 1 }, { note: 349.23, dur: 1 }, { note: 329.63, dur: 2 },
+  { note: 261.63, dur: 0.75 }, { note: 261.63, dur: 0.25 }, { note: 293.66, dur: 1 }, { note: 261.63, dur: 1 }, { note: 392.00, dur: 1 }, { note: 349.23, dur: 2 },
+  { note: 261.63, dur: 0.75 }, { note: 261.63, dur: 0.25 }, { note: 523.25, dur: 1 }, { note: 440.00, dur: 1 }, { note: 349.23, dur: 1 }, { note: 329.63, dur: 1 }, { note: 293.66, dur: 2 },
+  { note: 466.16, dur: 0.75 }, { note: 466.16, dur: 0.25 }, { note: 440.00, dur: 1 }, { note: 349.23, dur: 1 }, { note: 392.00, dur: 1 }, { note: 349.23, dur: 2.5 }
+];
 
 function initAudioContext() {
   if (!audioCtx) {
@@ -29,6 +46,7 @@ function initAudioContext() {
   }
 }
 
+// Interactive Sound FX (Synthesized for instant zero-latency feedback)
 function playAudioFx(type) {
   if (!soundEnabled) return;
   try {
@@ -43,7 +61,7 @@ function playAudioFx(type) {
       osc.type = 'sine';
       osc.frequency.setValueAtTime(450, now);
       osc.frequency.exponentialRampToValueAtTime(150, now + 0.08);
-      gain.gain.setValueAtTime(0.3, now);
+      gain.gain.setValueAtTime(0.18, now);
       gain.gain.exponentialRampToValueAtTime(0.01, now + 0.08);
       osc.connect(gain);
       gain.connect(audioCtx.destination);
@@ -56,7 +74,7 @@ function playAudioFx(type) {
       osc.type = 'triangle';
       osc.frequency.setValueAtTime(320, now);
       osc.frequency.exponentialRampToValueAtTime(640, now + 0.06);
-      gain.gain.setValueAtTime(0.15, now);
+      gain.gain.setValueAtTime(0.12, now);
       gain.gain.exponentialRampToValueAtTime(0.01, now + 0.06);
       osc.connect(gain);
       gain.connect(audioCtx.destination);
@@ -67,9 +85,9 @@ function playAudioFx(type) {
       const osc = audioCtx.createOscillator();
       const gain = audioCtx.createGain();
       osc.type = 'sine';
-      osc.frequency.setValueAtTime(987.77, now); // B5
-      osc.frequency.setValueAtTime(1318.51, now + 0.08); // E6
-      gain.gain.setValueAtTime(0.2, now);
+      osc.frequency.setValueAtTime(987.77, now);
+      osc.frequency.setValueAtTime(1318.51, now + 0.08);
+      gain.gain.setValueAtTime(0.18, now);
       gain.gain.exponentialRampToValueAtTime(0.01, now + 0.35);
       osc.connect(gain);
       gain.connect(audioCtx.destination);
@@ -77,7 +95,6 @@ function playAudioFx(type) {
       osc.stop(now + 0.35);
     }
     else if (type === 'blow') {
-      // Noise burst for blowing whoosh
       const bufferSize = audioCtx.sampleRate * 0.4;
       const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
       const output = buffer.getChannelData(0);
@@ -91,7 +108,7 @@ function playAudioFx(type) {
       filter.frequency.setValueAtTime(600, now);
       filter.frequency.linearRampToValueAtTime(200, now + 0.4);
       const gain = audioCtx.createGain();
-      gain.gain.setValueAtTime(0.35, now);
+      gain.gain.setValueAtTime(0.28, now);
       gain.gain.exponentialRampToValueAtTime(0.01, now + 0.4);
       whiteNoise.connect(filter);
       filter.connect(gain);
@@ -100,14 +117,14 @@ function playAudioFx(type) {
       whiteNoise.stop(now + 0.4);
     }
     else if (type === 'fanfare') {
-      const notes = [523.25, 659.25, 783.99, 1046.50]; // C5, E5, G5, C6
+      const notes = [523.25, 659.25, 783.99, 1046.50];
       notes.forEach((freq, i) => {
         const osc = audioCtx.createOscillator();
         const gain = audioCtx.createGain();
         osc.type = 'triangle';
         osc.frequency.value = freq;
         const noteTime = now + (i * 0.1);
-        gain.gain.setValueAtTime(0.2, noteTime);
+        gain.gain.setValueAtTime(0.18, noteTime);
         gain.gain.exponentialRampToValueAtTime(0.01, noteTime + 0.3);
         osc.connect(gain);
         gain.connect(audioCtx.destination);
@@ -116,35 +133,154 @@ function playAudioFx(type) {
       });
     }
   } catch (e) {
-    console.log('Audio FX error:', e);
+    console.log('Audio FX notice:', e);
   }
 }
 
-// Audio Toggle Button
-const audioToggleBtn = document.getElementById('audioToggle');
-if (audioToggleBtn) {
-  audioToggleBtn.addEventListener('click', () => {
-    initAudioContext();
-    soundEnabled = !soundEnabled;
-    const icon = document.getElementById('audioIcon');
-    const label = audioToggleBtn.querySelector('.audio-label');
-    if (soundEnabled) {
-      icon.textContent = '🔊';
-      label.textContent = 'SFX: ON';
-      audioToggleBtn.classList.remove('muted');
-      playAudioFx('coin');
-      showToast('🔊 Sound Effects Enabled!');
-      if (currentStep >= 2) {
-        playBirthdaySong();
-      }
-    } else {
-      icon.textContent = '🔇';
-      label.textContent = 'SFX: OFF';
-      audioToggleBtn.classList.add('muted');
-      showToast('🔇 Sound Effects Muted');
-      stopBirthdaySong();
+// Background Music Controller (Loops automatically)
+function initBackgroundMusic() {
+  if (!bgMusicAudio) {
+    bgMusicAudio = new Audio(BACKEND_AUDIO_SRC);
+    bgMusicAudio.loop = true;
+    bgMusicAudio.volume = 0.8;
+  }
+
+  // Play automatically on load (ON by default)
+  playBackgroundMusic();
+
+  // Button toggle click listener
+  const toggleBtn = document.getElementById('audioToggle');
+  if (toggleBtn) {
+    toggleBtn.addEventListener('click', toggleBackgroundMusic);
+  }
+
+  // Browser Autoplay Policy Handler (transparent one-time gesture unlock)
+  const startMusicOnFirstGesture = () => {
+    if (soundEnabled && (!bgMusicAudio || bgMusicAudio.paused)) {
+      playBackgroundMusic();
     }
+    window.removeEventListener('click', startMusicOnFirstGesture);
+    window.removeEventListener('touchstart', startMusicOnFirstGesture);
+    window.removeEventListener('keydown', startMusicOnFirstGesture);
+    window.removeEventListener('scroll', startMusicOnFirstGesture);
+  };
+
+  window.addEventListener('click', startMusicOnFirstGesture, { once: true, passive: true });
+  window.addEventListener('touchstart', startMusicOnFirstGesture, { once: true, passive: true });
+  window.addEventListener('keydown', startMusicOnFirstGesture, { once: true, passive: true });
+  window.addEventListener('scroll', startMusicOnFirstGesture, { once: true, passive: true });
+}
+
+function playBackgroundMusic() {
+  if (!soundEnabled) return;
+  initAudioContext();
+
+  if (!bgMusicAudio) {
+    bgMusicAudio = new Audio(BACKEND_AUDIO_SRC);
+    bgMusicAudio.loop = true;
+    bgMusicAudio.volume = 0.8;
+  }
+
+  bgMusicAudio.play().then(() => {
+    bgMusicPlaying = true;
+    stopSynthFallback();
+    updateMusicUI(true);
+  }).catch(err => {
+    // If local mp3 not uploaded yet or blocked by browser before gesture,
+    // play synthesized celebration theme so music always works out of the box!
+    console.log('Playing synthesized birthday theme (or waiting for local mp3):', err);
+    synthMelodyIndex = 0;
+    playSynthFallback();
+    updateMusicUI(true);
   });
+}
+
+function pauseBackgroundMusic() {
+  soundEnabled = false;
+  bgMusicPlaying = false;
+  if (bgMusicAudio) {
+    try { bgMusicAudio.pause(); } catch(e) {}
+  }
+  stopSynthFallback();
+  updateMusicUI(false);
+  showToast('🔇 Music Muted');
+}
+
+function toggleBackgroundMusic() {
+  if (soundEnabled) {
+    pauseBackgroundMusic();
+  } else {
+    soundEnabled = true;
+    playBackgroundMusic();
+    showToast('🔊 Music: ON');
+  }
+}
+
+function updateMusicUI(isPlaying) {
+  const toggleBtn = document.getElementById('audioToggle');
+  const icon = document.getElementById('audioIcon');
+  const label = document.getElementById('audioLabel');
+
+  if (toggleBtn) {
+    if (isPlaying) {
+      toggleBtn.classList.remove('muted');
+    } else {
+      toggleBtn.classList.add('muted');
+    }
+  }
+
+  if (icon) icon.textContent = isPlaying ? '🔊' : '🔇';
+  if (label) label.textContent = isPlaying ? 'Music: ON' : 'Music: OFF';
+}
+
+function playSynthFallback() {
+  if (!soundEnabled) return;
+  initAudioContext();
+  if (!audioCtx) return;
+
+  const now = audioCtx.currentTime;
+  const item = fallbackMelody[synthMelodyIndex];
+  const duration = item.dur * 0.42;
+
+  synthFallbackOsc = audioCtx.createOscillator();
+  synthFallbackGain = audioCtx.createGain();
+
+  synthFallbackOsc.type = 'triangle';
+  synthFallbackOsc.frequency.setValueAtTime(item.note, now);
+
+  synthFallbackGain.gain.setValueAtTime(0.001, now);
+  synthFallbackGain.gain.linearRampToValueAtTime(0.06, now + 0.03);
+  synthFallbackGain.gain.setValueAtTime(0.06, now + duration - 0.03);
+  synthFallbackGain.gain.linearRampToValueAtTime(0.001, now + duration);
+
+  synthFallbackOsc.connect(synthFallbackGain);
+  synthFallbackGain.connect(audioCtx.destination);
+
+  synthFallbackOsc.start(now);
+  synthFallbackOsc.stop(now + duration);
+
+  synthMelodyIndex = (synthMelodyIndex + 1) % fallbackMelody.length;
+  synthFallbackTimeout = setTimeout(playSynthFallback, duration * 1000 + 40);
+}
+
+function stopSynthFallback() {
+  if (synthFallbackTimeout) {
+    clearTimeout(synthFallbackTimeout);
+    synthFallbackTimeout = null;
+  }
+  if (synthFallbackOsc) {
+    try { synthFallbackOsc.stop(); } catch(e) {}
+    synthFallbackOsc = null;
+  }
+}
+
+// Backward-compatibility aliases
+function playBirthdaySong() {
+  playBackgroundMusic();
+}
+
+function stopBirthdaySong() {
+  // Keeps music seamlessly playing across all steps
 }
 
 // =====================================================
@@ -328,13 +464,7 @@ function showStep(stepNum) {
 
   // Run step-specific setups
   if (stepNum === 2) {
-    playBirthdaySong();
     restoreCakeState();
-  } else {
-    // If navigating to home, pause song; otherwise keep festive music playing
-    if (stepNum < 2) {
-      stopBirthdaySong();
-    }
   }
   
   if (stepNum === 3) {
@@ -493,96 +623,6 @@ function updateNavbarLocks() {
       }
     }
   });
-}
-
-// Birthday Song Player logic
-let songPlaying = false;
-let songAudio = null;
-let synthMelodyTimeout = null;
-let currentSynthOsc = null;
-let currentSynthGain = null;
-let melodyIndex = 0;
-
-const birthdayMelody = [
-  { note: 'C4', dur: 0.75 }, { note: 'C4', dur: 0.25 }, { note: 'D4', dur: 1 }, { note: 'C4', dur: 1 }, { note: 'F4', dur: 1 }, { note: 'E4', dur: 2 },
-  { note: 'C4', dur: 0.75 }, { note: 'C4', dur: 0.25 }, { note: 'D4', dur: 1 }, { note: 'C4', dur: 1 }, { note: 'G4', dur: 1 }, { note: 'F4', dur: 2 },
-  { note: 'C4', dur: 0.75 }, { note: 'C4', dur: 0.25 }, { note: 'C5', dur: 1 }, { note: 'A4', dur: 1 }, { note: 'F4', dur: 1 }, { note: 'E4', dur: 1 }, { note: 'D4', dur: 2 },
-  { note: 'A#4', dur: 0.75 }, { note: 'A#4', dur: 0.25 }, { note: 'A4', dur: 1 }, { note: 'F4', dur: 1 }, { note: 'G4', dur: 1 }, { note: 'F4', dur: 2 }
-];
-
-const noteFreqs = {
-  'C4': 261.63, 'D4': 293.66, 'E4': 329.63, 'F4': 349.23, 'G4': 392.00, 'A4': 440.00, 'A#4': 466.16, 'C5': 523.25
-};
-
-function playBirthdaySong() {
-  if (songPlaying) return;
-  if (!soundEnabled) return;
-  songPlaying = true;
-  
-  songAudio = new Audio('birthday_song.mp3');
-  songAudio.loop = true;
-  
-  songAudio.play().then(() => {
-    showToast('🎵 Playing Custom Birthday Song! 🎂');
-  }).catch(err => {
-    console.log('Local MP3 not found or blocked. Playing synthesized BFF.OS theme!', err);
-    melodyIndex = 0;
-    playSynthBirthdaySong();
-  });
-}
-
-function playSynthBirthdaySong() {
-  if (!songPlaying || !soundEnabled) return;
-  initAudioContext();
-  if (!audioCtx) return;
-  
-  const now = audioCtx.currentTime;
-  const item = birthdayMelody[melodyIndex];
-  const freq = noteFreqs[item.note];
-  const duration = item.dur * 0.45;
-  
-  currentSynthOsc = audioCtx.createOscillator();
-  currentSynthGain = audioCtx.createGain();
-  
-  currentSynthOsc.type = 'triangle';
-  currentSynthOsc.frequency.setValueAtTime(freq, now);
-  
-  currentSynthGain.gain.setValueAtTime(0, now);
-  currentSynthGain.gain.linearRampToValueAtTime(0.06, now + 0.03);
-  currentSynthGain.gain.setValueAtTime(0.06, now + duration - 0.03);
-  currentSynthGain.gain.linearRampToValueAtTime(0, now + duration);
-  
-  currentSynthOsc.connect(currentSynthGain);
-  currentSynthGain.connect(audioCtx.destination);
-  
-  currentSynthOsc.start(now);
-  currentSynthOsc.stop(now + duration);
-  
-  melodyIndex = (melodyIndex + 1) % birthdayMelody.length;
-  synthMelodyTimeout = setTimeout(playSynthBirthdaySong, duration * 1000 + 40);
-}
-
-function stopBirthdaySong() {
-  songPlaying = false;
-  
-  if (songAudio) {
-    try {
-      songAudio.pause();
-      songAudio = null;
-    } catch (e) {}
-  }
-  
-  if (synthMelodyTimeout) {
-    clearTimeout(synthMelodyTimeout);
-    synthMelodyTimeout = null;
-  }
-  
-  if (currentSynthOsc) {
-    try {
-      currentSynthOsc.stop();
-      currentSynthOsc = null;
-    } catch (e) {}
-  }
 }
 
 // =====================================================
@@ -1788,8 +1828,8 @@ const TERMINAL_COMMANDS = {
   • <span class="cmd-badge">hype riya</span>           - Run maximum hype sequence
   • <span class="cmd-badge">compliment</span>          - Generate a sweet designer compliment
   • <span class="cmd-badge">roast</span>               - Generate a playful creative roast
-  • <span class="cmd-badge">claim_gift</span>          - Jump to the ₹500 Gift Vault
-  • <span class="cmd-badge">blow_candle</span>         - Extinguish the cake candles
+  • <span class="cmd-badge">admin</span>                - Unlock Admin Studio to upload custom audio tracks
+  • <span class="cmd-badge">upload_audio</span>         - Open Custom Audio Studio in Admin mode
   • <span class="cmd-badge">clear</span>               - Clear the console
   • <span class="cmd-badge">exit</span>                - Close the creative console
 `,
@@ -1882,6 +1922,13 @@ and proceeded to make everything around her breathtakingly beautiful.
   blow_candle: () => {
     blowOutCandles();
     return 'Extinguishing candles on the cake... Done! 🌸';
+  },
+  music: () => {
+    toggleBackgroundMusic();
+    return soundEnabled ? '🎵 Background Music: Playing' : '🔇 Background Music: Paused';
+  },
+  admin: () => {
+    return '👑 <span class="term-highlight">Backend Audio Config:</span> Place your celebration audio file named <code>birthday_song.mp3</code> in the project directory for automatic looped playback.';
   },
   clear: () => {
     if (terminalHistory) terminalHistory.innerHTML = '';
@@ -2488,6 +2535,9 @@ window.addEventListener('DOMContentLoaded', () => {
       activeOrderData = JSON.parse(localStorage.getItem('giftVaultActiveOrder'));
     } catch (e) { activeOrderData = null; }
   }
+
+  // Initialize Background Music (ON by default in loop)
+  initBackgroundMusic();
 
   // Resume the step where she left off!
   currentStep = maxUnlockedStep;
