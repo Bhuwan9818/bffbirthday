@@ -137,62 +137,109 @@ function playAudioFx(type) {
   }
 }
 
-// Background Music Controller (Loops automatically)
+// Background Music Controller
+// Music starts automatically when entering Step 2 (candle/cake event)
 function initBackgroundMusic() {
   if (!bgMusicAudio) {
-    bgMusicAudio = new Audio(BACKEND_AUDIO_SRC);
+    bgMusicAudio = new Audio();
+    bgMusicAudio.src = BACKEND_AUDIO_SRC;
     bgMusicAudio.loop = true;
     bgMusicAudio.volume = 0.8;
+    bgMusicAudio.preload = 'auto';
+
+    bgMusicAudio.addEventListener('play', () => {
+      bgMusicPlaying = true;
+      stopSynthFallback();
+      updateMusicUI(true);
+    });
+
+    bgMusicAudio.addEventListener('pause', () => {
+      bgMusicPlaying = false;
+      updateMusicUI(false);
+    });
   }
 
-  // Play automatically on load (ON by default)
-  playBackgroundMusic();
-
-  // Button toggle click listener
+  // Bind toggle button click
   const toggleBtn = document.getElementById('audioToggle');
   if (toggleBtn) {
     toggleBtn.addEventListener('click', toggleBackgroundMusic);
   }
 
-  // Browser Autoplay Policy Handler (transparent one-time gesture unlock)
-  const startMusicOnFirstGesture = () => {
-    if (soundEnabled && (!bgMusicAudio || bgMusicAudio.paused)) {
-      playBackgroundMusic();
-    }
-    window.removeEventListener('click', startMusicOnFirstGesture);
-    window.removeEventListener('touchstart', startMusicOnFirstGesture);
-    window.removeEventListener('keydown', startMusicOnFirstGesture);
-    window.removeEventListener('scroll', startMusicOnFirstGesture);
-  };
+  // DO NOT autoplay here — music starts when user enters Step 2 (candle event)
+}
 
-  window.addEventListener('click', startMusicOnFirstGesture, { once: true, passive: true });
-  window.addEventListener('touchstart', startMusicOnFirstGesture, { once: true, passive: true });
-  window.addEventListener('keydown', startMusicOnFirstGesture, { once: true, passive: true });
-  window.addEventListener('scroll', startMusicOnFirstGesture, { once: true, passive: true });
+// Called from showStep() when user enters Step 2+
+// Uses a one-time gesture unlock to satisfy browser autoplay policy
+function startMusicForStep2() {
+  const toggleBtn = document.getElementById('audioToggle');
+
+  // Show the toggle button (was hidden on Step 1)
+  if (toggleBtn) {
+    toggleBtn.style.display = '';
+    toggleBtn.style.animation = 'musicBtnFadeIn 0.5s ease';
+  }
+
+  if (bgMusicPlaying && bgMusicAudio && !bgMusicAudio.paused) {
+    // Already playing from a previous visit to Step 2+ — nothing to do
+    return;
+  }
+
+  // Try to play immediately (works if user already interacted with page)
+  playBackgroundMusic();
+
+  // If browser blocks it (no prior gesture), wait for the very next interaction
+  if (!bgMusicPlaying) {
+    const gestureEvents = ['click', 'pointerdown', 'touchstart', 'keydown', 'scroll'];
+    const unlockOnGesture = (e) => {
+      // Don't consume clicks on the toggle button itself
+      if (e.target && e.target.closest && e.target.closest('#audioToggle')) return;
+      if (soundEnabled && (!bgMusicAudio || bgMusicAudio.paused)) {
+        initAudioContext();
+        playBackgroundMusic();
+      }
+      gestureEvents.forEach(ev => window.removeEventListener(ev, unlockOnGesture, true));
+    };
+    gestureEvents.forEach(ev => window.addEventListener(ev, unlockOnGesture, { capture: true, passive: true }));
+  }
 }
 
 function playBackgroundMusic() {
-  if (!soundEnabled) return;
   initAudioContext();
 
   if (!bgMusicAudio) {
-    bgMusicAudio = new Audio(BACKEND_AUDIO_SRC);
+    bgMusicAudio = new Audio();
+    bgMusicAudio.src = BACKEND_AUDIO_SRC;
     bgMusicAudio.loop = true;
     bgMusicAudio.volume = 0.8;
+    bgMusicAudio.preload = 'auto';
+
+    bgMusicAudio.addEventListener('play', () => {
+      bgMusicPlaying = true;
+      stopSynthFallback();
+      updateMusicUI(true);
+    });
+
+    bgMusicAudio.addEventListener('pause', () => {
+      bgMusicPlaying = false;
+      updateMusicUI(false);
+    });
   }
 
-  bgMusicAudio.play().then(() => {
-    bgMusicPlaying = true;
-    stopSynthFallback();
-    updateMusicUI(true);
-  }).catch(err => {
-    // If local mp3 not uploaded yet or blocked by browser before gesture,
-    // play synthesized celebration theme so music always works out of the box!
-    console.log('Playing synthesized birthday theme (or waiting for local mp3):', err);
-    synthMelodyIndex = 0;
-    playSynthFallback();
-    updateMusicUI(true);
-  });
+  if (!soundEnabled) return;
+
+  const playPromise = bgMusicAudio.play();
+  if (playPromise !== undefined) {
+    playPromise.then(() => {
+      bgMusicPlaying = true;
+      stopSynthFallback();
+      updateMusicUI(true);
+    }).catch(err => {
+      // Browser blocked autoplay before user gesture
+      bgMusicPlaying = false;
+      updateMusicUI(false, true); // true = waiting for user interaction
+      console.log('Background audio waiting for first user gesture:', err.name);
+    });
+  }
 }
 
 function pauseBackgroundMusic() {
@@ -202,12 +249,20 @@ function pauseBackgroundMusic() {
     try { bgMusicAudio.pause(); } catch(e) {}
   }
   stopSynthFallback();
-  updateMusicUI(false);
+  updateMusicUI(false, false);
   showToast('🔇 Music Muted');
 }
 
-function toggleBackgroundMusic() {
-  if (soundEnabled) {
+function toggleBackgroundMusic(e) {
+  if (e) {
+    e.stopPropagation();
+    e.preventDefault();
+  }
+
+  // If audio is actively playing, pause it. Otherwise, start playing immediately in 1-go!
+  const isActivelyPlaying = bgMusicPlaying && bgMusicAudio && !bgMusicAudio.paused;
+
+  if (isActivelyPlaying) {
     pauseBackgroundMusic();
   } else {
     soundEnabled = true;
@@ -216,21 +271,37 @@ function toggleBackgroundMusic() {
   }
 }
 
-function updateMusicUI(isPlaying) {
+function updateMusicUI(isPlaying, isWaitingForGesture = false) {
   const toggleBtn = document.getElementById('audioToggle');
   const icon = document.getElementById('audioIcon');
   const label = document.getElementById('audioLabel');
 
   if (toggleBtn) {
     if (isPlaying) {
-      toggleBtn.classList.remove('muted');
+      toggleBtn.classList.remove('muted', 'waiting');
+      toggleBtn.title = 'Click to Mute Music';
     } else {
       toggleBtn.classList.add('muted');
+      if (isWaitingForGesture) {
+        toggleBtn.classList.add('waiting');
+        toggleBtn.title = 'Click to Play Birthday Music';
+      } else {
+        toggleBtn.classList.remove('waiting');
+        toggleBtn.title = 'Click to Unmute Music';
+      }
     }
   }
 
   if (icon) icon.textContent = isPlaying ? '🔊' : '🔇';
-  if (label) label.textContent = isPlaying ? 'Music: ON' : 'Music: OFF';
+  if (label) {
+    if (isPlaying) {
+      label.textContent = 'Music: ON';
+    } else if (isWaitingForGesture) {
+      label.textContent = 'Play Music 🎵';
+    } else {
+      label.textContent = 'Music: OFF';
+    }
+  }
 }
 
 function playSynthFallback() {
@@ -465,6 +536,18 @@ function showStep(stepNum) {
   // Run step-specific setups
   if (stepNum === 2) {
     restoreCakeState();
+    // Start music automatically when entering the candle/cake step
+    startMusicForStep2();
+  }
+
+  // Hide music toggle on Step 1, show it from Step 2 onwards
+  const musicToggle = document.getElementById('audioToggle');
+  if (musicToggle) {
+    if (stepNum === 1) {
+      musicToggle.style.display = 'none';
+    } else {
+      musicToggle.style.display = '';
+    }
   }
   
   if (stepNum === 3) {

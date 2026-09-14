@@ -223,6 +223,25 @@ img, svg {
   opacity: 0.7;
 }
 
+.music-toggle-btn.waiting {
+  border-color: rgba(236, 72, 153, 0.65);
+  box-shadow: 0 4px 20px rgba(236, 72, 153, 0.35);
+  opacity: 0.95;
+  animation: musicWaitingPulse 2.2s infinite ease-in-out;
+}
+
+@keyframes musicWaitingPulse {
+  0%, 100% {
+    box-shadow: 0 4px 20px rgba(236, 72, 153, 0.3);
+    border-color: rgba(236, 72, 153, 0.5);
+  }
+  50% {
+    box-shadow: 0 8px 30px rgba(236, 72, 153, 0.7), 0 0 20px rgba(245, 158, 11, 0.4);
+    border-color: var(--pink);
+    transform: translateY(-2px);
+  }
+}
+
 .music-toggle-btn.muted .music-bars span {
   animation: none !important;
   height: 3px !important;
@@ -262,6 +281,11 @@ img, svg {
   0% { height: 3px; background: var(--purple); }
   50% { height: 13px; background: var(--pink); }
   100% { height: 6px; background: var(--gold); }
+}
+
+@keyframes musicBtnFadeIn {
+  from { opacity: 0; transform: translateY(12px) scale(0.9); }
+  to   { opacity: 1; transform: translateY(0)   scale(1);   }
 }
 
 /* =====================================================
