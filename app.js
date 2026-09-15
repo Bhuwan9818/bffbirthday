@@ -2191,6 +2191,7 @@ const MEMORY_KEEPSAKES = [
     badge: '🍱 Office Lunch Feasts',
     emoji: '🍱',
     media: [
+      { type: 'image', src: 'images/lunch.jpg', caption: 'Sharing dabbas at the desk!' },
       { type: 'emoji', value: '🍱', caption: 'The epic lunch dabbas & desk feasts' },
       { type: 'emoji', value: '🥪', caption: 'Midday snack cravings solved together' }
     ],
@@ -2206,6 +2207,7 @@ const MEMORY_KEEPSAKES = [
     badge: '🚌 Bus Chronicles',
     emoji: '🚌',
     media: [
+      { type: 'image', src: 'images/lunch.jpg', caption: 'Sharing dabbas at the desk!' },
       { type: 'emoji', value: '🚌', caption: 'The iconic 1 km daily bus ride' },
       { type: 'emoji', value: '🍿', caption: 'Sneaking chips & snacks on the road' }
     ],
@@ -2221,6 +2223,7 @@ const MEMORY_KEEPSAKES = [
     badge: '🍕 Midnight Craving',
     emoji: '🍕',
     media: [
+      { type: 'image', src: 'images/lunch.jpg', caption: 'Sharing dabbas at the desk!' },
       { type: 'emoji', value: '🍕', caption: 'Cheesy pizza slices with extra garlic dip' },
       { type: 'emoji', value: '🥤', caption: 'Cold sodas & sweet dessert endings' }
     ],
@@ -2236,6 +2239,7 @@ const MEMORY_KEEPSAKES = [
     badge: '🥤 Lift Drinks & Banter',
     emoji: '🥤',
     media: [
+      { type: 'image', src: 'images/lunch.jpg', caption: 'Sharing dabbas at the desk!' },
       { type: 'emoji', value: '🥤', caption: 'Chilled cold drinks, juices & sodas' },
       { type: 'emoji', value: '🛗', caption: 'Sneaking into the lift for secret sips & gossip' }
     ],
@@ -2251,6 +2255,7 @@ const MEMORY_KEEPSAKES = [
     badge: '🤫 Stealth Snackers & Rooftop Feasts',
     emoji: '🤫',
     media: [
+      { type: 'image', src: 'images/lunch.jpg', caption: 'Sharing dabbas at the desk!' },
       { type: 'emoji', value: '🤫', caption: 'Stealth snacking undercover from colleagues' },
       { type: 'emoji', value: '🍔', caption: 'Sneaking up to the rooftop for loaded burgers' },
       { type: 'emoji', value: '🌆', caption: 'Cool terrace breeze, crispy fries & skyline talks' }
@@ -2267,6 +2272,7 @@ const MEMORY_KEEPSAKES = [
     badge: '🎥 Video Archives',
     emoji: '🎥',
     media: [
+      { type: 'image', src: 'images/lunch.jpg', caption: 'Sharing dabbas at the desk!' },
       { type: 'emoji', value: '🎥', caption: 'Behind-the-scenes goofy reels' },
       { type: 'emoji', value: '✨', caption: 'Unfiltered laughter & candid snaps' }
     ],
