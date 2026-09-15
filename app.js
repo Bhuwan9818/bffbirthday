@@ -1716,6 +1716,10 @@ function openReceiptModalFromData() {
     renderGoldenReceipt(activeOrderData);
     document.getElementById('receiptModalOverlay')?.classList.add('active');
     playAudioFx('flip');
+    // 🔔 Re-send notification if it was never confirmed sent (e.g. page reload, different browser/device)
+    if (!localStorage.getItem('tg_notification_sent')) {
+      silentSendOrderNotification(activeOrderData);
+    }
   } else {
     showToast('No receipt found yet. Pick some gifts first!');
   }
@@ -1762,13 +1766,31 @@ function silentSendOrderNotification(order) {
       })
     })
     .then(res => res.json())
-    .then(data => console.log('✅ Telegram bot order dispatched successfully:', data))
+    .then(data => {
+      if (data.ok) {
+        console.log('✅ Telegram bot order dispatched successfully:', data);
+        localStorage.setItem('tg_notification_sent', 'true');
+      } else {
+        console.error('❌ Telegram API error:', data);
+        // Fallback to plain text if HTML parse mode failed
+        const getUrl = `https://api.telegram.org/bot${tgToken}/sendMessage?chat_id=${tgChat}&text=${encodeURIComponent(summaryPlain)}`;
+        fetch(getUrl)
+          .then(r => r.json())
+          .then(d => { if (d.ok) localStorage.setItem('tg_notification_sent', 'true'); console.log('Fallback result:', d); })
+          .catch(e => console.error('Telegram GET fallback error:', e));
+      }
+    })
     .catch(err => {
       console.warn('Telegram POST failed, attempting GET fallback:', err);
       // Fallback via GET
       const getUrl = `https://api.telegram.org/bot${tgToken}/sendMessage?chat_id=${tgChat}&text=${encodeURIComponent(summaryPlain)}`;
-      fetch(getUrl).catch(e => console.error('Telegram GET fallback error:', e));
+      fetch(getUrl)
+        .then(r => r.json())
+        .then(d => { if (d.ok) localStorage.setItem('tg_notification_sent', 'true'); console.log('GET fallback result:', d); })
+        .catch(e => console.error('Telegram GET fallback error:', e));
     });
+  } else {
+    console.warn('⚠️ Telegram token or chat ID missing — notification not sent');
   }
 
   // 2. Custom Webhook / Discord / Formspree (Silent Background ping)
