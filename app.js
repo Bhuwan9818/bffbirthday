@@ -706,6 +706,9 @@ function updateNavbarLocks() {
       }
     }
   });
+
+  // Sync cart button locked/unlocked state
+  updateCartBtnState();
 }
 
 // =====================================================
@@ -1558,6 +1561,12 @@ function renderDrawerItems(total, remaining, count, pct) {
 
 // Drawer toggles
 function openCartDrawer() {
+  // Cart is only accessible once the Gift Vault (step 4) is unlocked
+  if (maxUnlockedStep < 4) {
+    playAudioFx('pop');
+    showToast('🔒 Complete Step 3 (Studio Games) to unlock the Gift Cart!');
+    return;
+  }
   document.getElementById('cartOverlay')?.classList.add('active');
   document.getElementById('cartDrawer')?.classList.add('active');
   playAudioFx('flip');
@@ -1566,6 +1575,23 @@ function openCartDrawer() {
 function closeCartDrawer() {
   document.getElementById('cartOverlay')?.classList.remove('active');
   document.getElementById('cartDrawer')?.classList.remove('active');
+}
+
+/** Sync the navbar cart button's locked/unlocked visual state */
+function updateCartBtnState() {
+  const cartBtn = document.getElementById('cartBtn');
+  if (!cartBtn) return;
+  if (maxUnlockedStep >= 4) {
+    cartBtn.disabled = false;
+    cartBtn.classList.remove('locked');
+    cartBtn.title = 'Open Gift Cart';
+    cartBtn.setAttribute('aria-label', 'Open Gift Cart');
+  } else {
+    cartBtn.disabled = false; // keep clickable for toast, but styled as locked
+    cartBtn.classList.add('locked');
+    cartBtn.title = '🔒 Locked — Complete Step 3 first';
+    cartBtn.setAttribute('aria-label', 'Gift Cart Locked');
+  }
 }
 
 document.getElementById('cartBtn')?.addEventListener('click', openCartDrawer);

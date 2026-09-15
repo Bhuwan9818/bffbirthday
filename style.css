@@ -444,6 +444,22 @@ img, svg {
   transform: scale(1.05);
 }
 
+/* Cart button locked state — shown before step 4 is unlocked */
+.cart-btn.locked {
+  opacity: 0.45;
+  cursor: not-allowed;
+  filter: grayscale(0.4);
+  background: rgba(200, 200, 210, 0.35);
+  border-color: rgba(150, 150, 170, 0.4);
+  box-shadow: none;
+}
+
+.cart-btn.locked:hover {
+  transform: none;
+  background: rgba(200, 200, 210, 0.35);
+  border-color: rgba(150, 150, 170, 0.4);
+}
+
 .cart-count {
   font-size: 0.75rem;
   font-weight: 800;
@@ -3305,10 +3321,15 @@ img, svg {
   .hamburger { display: flex; }
   .terminal-nav-btn { display: none; }
 
+  /* Memories timeline: switch to single column */
   .timeline { grid-template-columns: 1fr; }
-  .memory-card.left, .memory-card.right { justify-self: center; }
-  .timeline-center { flex-direction: row; padding: 0; }
+  .memory-card.left, .memory-card.right { justify-self: center; width: 100%; }
+  .timeline-center { flex-direction: row; padding: 8px 0; }
   .memory-card-inner { max-width: 100%; }
+  .memories-section { padding: 60px 5%; }
+
+  /* Polaroid grid on tablet */
+  .polaroid-grid { gap: 20px; }
 
   .budget-info-row { flex-direction: column; align-items: flex-start; gap: 12px; }
   
@@ -4295,12 +4316,104 @@ img, svg {
     width: 100%;
     justify-content: center;
   }
+
+  /* ---- Memories Section Mobile ---- */
+  .memories-section {
+    padding: 50px 4%;
+  }
+
+  /* Timeline becomes a straight vertical list, no center column */
+  .timeline {
+    grid-template-columns: 1fr;
+    gap: 0;
+  }
+
+  /* Hide the center dots column and use a border-left instead */
+  .timeline-center {
+    display: none;
+  }
+
+  .memory-card {
+    padding: 0 0 16px 0;
+    width: 100%;
+  }
+
+  .memory-card.left,
+  .memory-card.right {
+    justify-self: stretch;
+    width: 100%;
+  }
+
+  .memory-card-inner {
+    max-width: 100%;
+    padding: 20px 18px;
+    border-left: 3px solid var(--pink);
+  }
+
+  .memory-emoji {
+    font-size: 2rem;
+  }
+
+  .memory-card-inner h3 {
+    font-size: 1.05rem;
+  }
+
+  /* Gallery / Polaroid section */
+  .gallery-section {
+    padding: 50px 4%;
+  }
+
+  /* 2-column grid of polaroids on mobile */
+  .polaroid-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 18px;
+    justify-items: center;
+  }
+
+  .polaroid {
+    width: 100%;
+    max-width: 160px;
+    padding: 10px 10px 38px;
+    transform: none !important; /* remove tilt on mobile for cleaner look */
+  }
+
+  .polaroid:hover {
+    transform: scale(1.04) translateY(-4px) !important;
+  }
+
+  .polaroid-img {
+    height: 110px;
+  }
+
+  .polaroid p {
+    font-size: 0.95rem;
+  }
 }
 
 @media (max-width: 400px) {
   .btn {
     padding: 11px 20px;
     font-size: 0.88rem;
+  }
+
+  /* Polaroid grid: single column on very small phones */
+  .polaroid-grid {
+    grid-template-columns: 1fr;
+    gap: 24px;
+  }
+
+  .polaroid {
+    max-width: 220px;
+    margin: 0 auto;
+  }
+
+  .polaroid-img {
+    height: 130px;
+  }
+
+  .memory-card-inner {
+    padding: 16px 14px;
   }
 }
 
