@@ -2191,9 +2191,10 @@ const MEMORY_KEEPSAKES = [
     badge: '🍱 Office Lunch Feasts',
     emoji: '🍱',
     media: [
-      { type: 'image', src: 'images/lunch.jpg', caption: 'Sharing dabbas at the desk!' },
-      { type: 'emoji', value: '🍱', caption: 'The epic lunch dabbas & desk feasts' },
-      { type: 'emoji', value: '🥪', caption: 'Midday snack cravings solved together' }
+      { type: 'image', src: 'images/lunchBreak.jpeg', caption: 'Office lunch break & desk feasts 🥪' },
+      { type: 'image', src: 'images/lunch.jpeg', caption: 'Sharing dabbas together at the desk 🍱' },
+      { type: 'video', src: 'videos/lunch.mp4', caption: 'Office lunch madness video 🎥' },
+      { type: 'video', src: 'videos/lunch1.mp4', caption: 'Desk snacking laughs clip ✨' }
     ],
     notes: 'What began as sharing desk snacks quickly turned into daily reserved lunch seats, exchanging dabbas, and laughing so hard that the entire office floor looked at us. Every single lunch became a mini feast when we ate together!',
     quote: '“Are you hungry yet?” — Asked at literally 11:30 AM every single day without fail.',
@@ -2207,9 +2208,8 @@ const MEMORY_KEEPSAKES = [
     badge: '🚌 Bus Chronicles',
     emoji: '🚌',
     media: [
-      { type: 'image', src: 'images/lunch.jpg', caption: 'Sharing dabbas at the desk!' },
-      { type: 'emoji', value: '🚌', caption: 'The iconic 1 km daily bus ride' },
-      { type: 'emoji', value: '🍿', caption: 'Sneaking chips & snacks on the road' }
+      { type: 'image', src: 'images/bus.jpeg', caption: 'Daily 1 km bus commute selfie 🚌' },
+      { type: 'video', src: 'videos/bus.mp4', caption: 'Bus rides & moving canteen video 🍿' }
     ],
     notes: 'Traveling to office and back home together every single day made the commute our favorite part of the day. The bus essentially transformed into our moving canteen — eating snacks while navigating traffic, sharing headphones, swapping spicy office tea, and laughing through the entire journey.',
     quote: '“Save me a seat, I have snacks!” — The unofficial commute slogan.',
@@ -2223,9 +2223,8 @@ const MEMORY_KEEPSAKES = [
     badge: '🍕 Midnight Craving',
     emoji: '🍕',
     media: [
-      { type: 'image', src: 'images/lunch.jpg', caption: 'Sharing dabbas at the desk!' },
-      { type: 'emoji', value: '🍕', caption: 'Cheesy pizza slices with extra garlic dip' },
-      { type: 'emoji', value: '🥤', caption: 'Cold sodas & sweet dessert endings' }
+      { type: 'image', src: 'images/pizza.jpeg', caption: 'Loaded pizza feasts & cheese pulls 🍕' },
+      { type: 'video', src: 'videos/pizza.mp4', caption: 'Cheesy pizza party video 🍕' }
     ],
     notes: 'Nothing beats devouring hot, loaded pizzas together after a hectic day! From debating over the best crusts to fighting for the last slice of cheesy garlic bread, our food adventures are always top-tier.',
     quote: '“There is always room for pizza. Always.”',
@@ -2239,9 +2238,7 @@ const MEMORY_KEEPSAKES = [
     badge: '🥤 Lift Drinks & Banter',
     emoji: '🥤',
     media: [
-      { type: 'image', src: 'images/lunch.jpg', caption: 'Sharing dabbas at the desk!' },
-      { type: 'emoji', value: '🥤', caption: 'Chilled cold drinks, juices & sodas' },
-      { type: 'emoji', value: '🛗', caption: 'Sneaking into the lift for secret sips & gossip' }
+      { type: 'video', src: 'videos/drink.mp4', caption: 'Sneaking cold drinks in the lift lobby 🥤🛗' }
     ],
     notes: 'Since neither of us drinks tea, official office “tea breaks” meant one thing: grabbing chilled cold drinks, fruit juices, or sodas, secretly sneaking into the lift / elevator lobby to drink undercover, spilling all the office tea, and laughing our hearts out before heading back to our desks!',
     quote: '“Tea break? Nah, cold drinks in the lift time!”',
@@ -2255,10 +2252,7 @@ const MEMORY_KEEPSAKES = [
     badge: '🤫 Stealth Snackers & Rooftop Feasts',
     emoji: '🤫',
     media: [
-      { type: 'image', src: 'images/lunch.jpg', caption: 'Sharing dabbas at the desk!' },
-      { type: 'emoji', value: '🤫', caption: 'Stealth snacking undercover from colleagues' },
-      { type: 'emoji', value: '🍔', caption: 'Sneaking up to the rooftop for loaded burgers' },
-      { type: 'emoji', value: '🌆', caption: 'Cool terrace breeze, crispy fries & skyline talks' }
+      { type: 'video', src: 'videos/secret.mp4', caption: 'Secret desk snacking & rooftop burger video 🤫🍔' }
     ],
     notes: 'The ultimate office thrills! Sneaking bites while furiously typing on the keyboard to look busy, opening crunchy chip packets in absolute slow motion, and passing snacks under monitors so colleagues and managers wouldn’t catch us. And whenever work got too hectic, sneaking up to the office rooftop with takeout bags of juicy burgers and crispy fries to feast in peace under the open sky!',
     quote: '“Eat fast, someone is coming!” ... and “Let’s sneak up to the rooftop with burgers!”',
@@ -2272,9 +2266,8 @@ const MEMORY_KEEPSAKES = [
     badge: '🎥 Video Archives',
     emoji: '🎥',
     media: [
-      { type: 'image', src: 'images/lunch.jpg', caption: 'Sharing dabbas at the desk!' },
-      { type: 'emoji', value: '🎥', caption: 'Behind-the-scenes goofy reels' },
-      { type: 'emoji', value: '✨', caption: 'Unfiltered laughter & candid snaps' }
+      { type: 'image', src: 'images/goofy.jpeg', caption: 'Unhinged candid moments & laughter 📸' },
+      { type: 'video', src: 'videos/goofy.mp4', caption: 'Goofy food video laughing clip 🎥✨' }
     ],
     notes: 'Our gallery is overflowing with candid food reactions, aesthetic slow-motion food pulls, unhinged laugh videos, and behind-the-scenes chaos. These clips document the most joyful chapters of our friendship.',
     quote: '“Camera eats first, but bestie laughs first!”',
