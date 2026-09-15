@@ -1101,76 +1101,84 @@ const MAX_BUDGET = 500;
 
 const GIFT_CATALOG = [
   {
-    id: 'coldbrew',
-    title: 'Artisanal Cold Brew & Cookies',
-    price: 220,
-    badge: '⭐ Daily Fuel',
-    emoji: '☕',
-    desc: 'Rich gourmet chilled brew paired with crunchy artisanal cookies for late-night creative sessions.'
+    id: 'movie_together',
+    title: 'Watch Movie Together',
+    price: 500,
+    badge: '🎬 Cinema Date',
+    emoji: '🍿',
+    desc: 'Movie tickets for us with a giant tub of caramel popcorn & drinks at the cinema.'
   },
   {
     id: 'chocolates',
-    title: 'Belgian Truffle Chocolate Box',
+    title: 'Box of Premium Chocolates',
     price: 350,
     badge: '🍫 Sweet Indulgence',
     emoji: '🍫',
-    desc: 'Assorted handcrafted luxury dark & milk Belgian pralines — because creative work deserves sweet rewards.'
+    desc: 'Delicious box of luxury dark, milk & hazelnut Belgian chocolates and truffles.'
   },
   {
-    id: 'sketchbook',
-    title: 'Premium Sketchbook + Fineliner Set',
-    price: 380,
-    badge: '🖊️ Artist\'s Pick',
-    emoji: '📓',
-    desc: 'Luxe A4 hardcover sketchbook + 6 Micron fineliners in a gorgeous gift set for your next big idea.'
+    id: 'restaurant_party',
+    title: 'Party at a Restaurant',
+    price: 500,
+    badge: '🍽️ Dine Out & Feast',
+    emoji: '🍽️',
+    desc: 'A lavish birthday celebration and dinner feast at your favorite restaurant!'
   },
   {
-    id: 'desk_plant',
-    title: 'Aesthetic Desk Plant / Succulent',
-    price: 250,
-    badge: '🌿 Studio Vibe',
-    emoji: '🪴',
-    desc: 'A gorgeous easy-care green succulent in a minimalist ceramic pot to elevate your creative studio.'
+    id: 'birthday_cake',
+    title: 'Special Birthday Cake',
+    price: 500,
+    badge: '🎂 Sweet Celebration',
+    emoji: '🎂',
+    desc: 'Your favorite customized birthday cake loaded with delicious toppings & candles.'
   },
   {
-    id: 'pizza_craving',
-    title: 'Midnight Swiggy / Zomato Pizza',
+    id: 'sweet_treat',
+    title: 'Treat Somewhere Special',
+    price: 450,
+    badge: '🍦 Foodie Outing',
+    emoji: '🍦',
+    desc: 'Spontaneous dessert outing anywhere you crave — waffles, boba, ice cream & more!'
+  },
+  {
+    id: 'full_day_trip',
+    title: 'A Full Day Trip & Adventure',
+    price: 500,
+    badge: '🚗 Road Trip',
+    emoji: '🚗',
+    desc: 'An epic full-day road trip, scenic sights, aesthetic photos & nonstop adventure!'
+  },
+  {
+    id: 'pizza_party',
+    title: 'Cheesy Pizza Party',
     price: 400,
     badge: '🍕 Midnight Craving',
     emoji: '🍕',
-    desc: 'Cheesy hot pizza of your choice delivered whenever the next 1 AM inspiration hits!'
+    desc: 'Loaded gourmet pizzas, garlic bread, dips & cold drinks for an epic pizza party.'
   },
   {
-    id: 'scented_candle',
-    title: 'Lavender Scented Candle & Fairy Lights',
-    price: 290,
-    badge: '🌸 Zen Aura',
-    emoji: '🕯️',
-    desc: 'Soothing aromatherapy soy candle + warm starry fairy lights for a cozy, inspiring creative space.'
+    id: 'teddy_bear',
+    title: 'Cute Giant Teddy Bear',
+    price: 400,
+    badge: '🧸 Warm Hugs',
+    emoji: '🧸',
+    desc: 'An adorable, super-soft and huggable plushie to keep forever in your room.'
   },
   {
-    id: 'movie_combo',
-    title: 'Movie Ticket + Tub of Caramel Popcorn',
-    price: 350,
-    badge: '🎬 Blockbuster Date',
-    emoji: '🍿',
-    desc: 'One ticket to your most anticipated cinema release + giant tub of sweet crunchy popcorn.'
+    id: 'aesthetic_gift',
+    title: 'Aesthetic Surprise Gift',
+    price: 400,
+    badge: '✨ Aesthetic Vibe',
+    emoji: '✨',
+    desc: 'Chic room decor, fairy lights, jewelry, or cute aesthetic stationery surprise!'
   },
   {
-    id: 'procreate_course',
-    title: 'Online Design / Procreate Masterclass',
-    price: 499,
-    badge: '🎨 Level Up',
-    emoji: '📱',
-    desc: 'Access to a premium Skillshare / Udemy design or Procreate masterclass of your choice!'
-  },
-  {
-    id: 'custom_wish',
-    title: 'Custom Mystery Wish (You Name It!)',
+    id: 'custom_gift',
+    title: 'Custom Gift — Tell Me Anything!',
     price: 500,
-    badge: '✨ Total Freedom',
-    emoji: '🎁',
-    desc: 'Anything specific you want under ₹500 — write in the order note and your friend will get it!'
+    badge: '💌 Unlimited Freedom',
+    emoji: '💌',
+    desc: 'Any custom wish or gift you have in mind — choose this and tell me whatever you want!'
   }
 ];
 
