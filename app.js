@@ -2039,7 +2039,7 @@ const TERMINAL_COMMANDS = {
 {
   <span class="term-highlight">"bff_status"</span>: "PERMANENT_UNCONDITIONAL",
   <span class="term-highlight">"compatibility"</span>: 100.0,
-  <span class="term-highlight">"favorite_activities"</span>: ["Moodboarding", "Chai runs", "Roasting everyone", "Late night chats"],
+  <span class="term-highlight">"favorite_activities"</span>: ["Moodboarding", "Cold drink runs", "Roasting everyone", "Late night chats"],
   <span class="term-highlight">"riya_talents"</span>: ["Colour theory", "Typography", "Illustration", "Making everything beautiful"],
   <span class="term-highlight">"shared_secrets"</span>: "ENCRYPTED_AES256_SAFE",
   <span class="term-highlight">"gift_vault_balance"</span>: ${vaultBal},
@@ -2175,26 +2175,312 @@ if (terminalInput) {
 }
 
 // =====================================================
+// 6.5. AESTHETIC KEEPSAKES & MEMORY STORY MODAL SYSTEM
+// =====================================================
+// 💡 HOW TO ATTACH YOUR OWN PHOTOS OR VIDEOS:
+// In the media array of each memory below, you can add images and videos:
+// For an Image: { type: 'image', src: 'images/your_photo.jpg', caption: 'Photo caption here' }
+// For a Video: { type: 'video', src: 'videos/your_clip.mp4', caption: 'Video caption here' }
+// For an Emoji: { type: 'emoji', value: '🍱', caption: 'Emoji representation' }
+const MEMORY_KEEPSAKES = [
+  {
+    id: 'office_lunch',
+    title: 'Office Lunch Breaks & Desk Feasts',
+    subtitle: 'Where the hunger connection began 🥪',
+    date: 'Every Single Afternoon • Desk Canteen',
+    badge: '🍱 Office Lunch Feasts',
+    emoji: '🍱',
+    media: [
+      { type: 'emoji', value: '🍱', caption: 'The epic lunch dabbas & desk feasts' },
+      { type: 'emoji', value: '🥪', caption: 'Midday snack cravings solved together' }
+    ],
+    notes: 'What began as sharing desk snacks quickly turned into daily reserved lunch seats, exchanging dabbas, and laughing so hard that the entire office floor looked at us. Every single lunch became a mini feast when we ate together!',
+    quote: '“Are you hungry yet?” — Asked at literally 11:30 AM every single day without fail.',
+    tags: ['#OfficeBuddies', '#LunchFeasts', '#DabbaExchange', '#ZeroHunger']
+  },
+  {
+    id: 'bus_commute',
+    title: 'Daily Bus Commute & Moving Canteen',
+    subtitle: 'Eating on the go & non-stop gossip 🚌',
+    date: 'Daily Morning & Evening Route',
+    badge: '🚌 Bus Chronicles',
+    emoji: '🚌',
+    media: [
+      { type: 'emoji', value: '🚌', caption: 'The iconic 1 km daily bus ride' },
+      { type: 'emoji', value: '🍿', caption: 'Sneaking chips & snacks on the road' }
+    ],
+    notes: 'Traveling to office and back home together every single day made the commute our favorite part of the day. The bus essentially transformed into our moving canteen — eating snacks while navigating traffic, sharing headphones, swapping spicy office tea, and laughing through the entire journey.',
+    quote: '“Save me a seat, I have snacks!” — The unofficial commute slogan.',
+    tags: ['#BusAdventures', '#MovingCanteen', '#1kmNeighbors', '#CommuteGossip']
+  },
+  {
+    id: 'pizza_parties',
+    title: 'Pizza Feasts & Spontaneous Treat Nights',
+    subtitle: 'Cheese pulls, garlic bread & pure joy 🍕',
+    date: 'Whenever Food Cravings Hit',
+    badge: '🍕 Midnight Craving',
+    emoji: '🍕',
+    media: [
+      { type: 'emoji', value: '🍕', caption: 'Cheesy pizza slices with extra garlic dip' },
+      { type: 'emoji', value: '🥤', caption: 'Cold sodas & sweet dessert endings' }
+    ],
+    notes: 'Nothing beats devouring hot, loaded pizzas together after a hectic day! From debating over the best crusts to fighting for the last slice of cheesy garlic bread, our food adventures are always top-tier.',
+    quote: '“There is always room for pizza. Always.”',
+    tags: ['#PizzaParty', '#CheesePulls', '#FoodieSoulmates', '#CheatMealAlways']
+  },
+  {
+    id: 'drinks_banter',
+    title: 'Cold Drinks & Secret Lift Escapes',
+    subtitle: 'Sneaking cold drinks in the lift during tea breaks 🥤🛗',
+    date: 'Daily 4:00 PM Break • Lift & Lobby',
+    badge: '🥤 Lift Drinks & Banter',
+    emoji: '🥤',
+    media: [
+      { type: 'emoji', value: '🥤', caption: 'Chilled cold drinks, juices & sodas' },
+      { type: 'emoji', value: '🛗', caption: 'Sneaking into the lift for secret sips & gossip' }
+    ],
+    notes: 'Since neither of us drinks tea, official office “tea breaks” meant one thing: grabbing chilled cold drinks, fruit juices, or sodas, secretly sneaking into the lift / elevator lobby to drink undercover, spilling all the office tea, and laughing our hearts out before heading back to our desks!',
+    quote: '“Tea break? Nah, cold drinks in the lift time!”',
+    tags: ['#NoChaiClub', '#ColdDrinks', '#LiftBanter', '#SecretDrinkers', '#OfficeBreaks', '#DeskEscapes']
+  },
+  {
+    id: 'secret_snacking',
+    title: 'Secret Desk Snacking & Rooftop Burger Escapes',
+    subtitle: 'Eating undercover & terrace feasts 🤫🍔',
+    date: 'Desk Canteen & Office Rooftop Escapes',
+    badge: '🤫 Stealth Snackers & Rooftop Feasts',
+    emoji: '🤫',
+    media: [
+      { type: 'emoji', value: '🤫', caption: 'Stealth snacking undercover from colleagues' },
+      { type: 'emoji', value: '🍔', caption: 'Sneaking up to the rooftop for loaded burgers' },
+      { type: 'emoji', value: '🌆', caption: 'Cool terrace breeze, crispy fries & skyline talks' }
+    ],
+    notes: 'The ultimate office thrills! Sneaking bites while furiously typing on the keyboard to look busy, opening crunchy chip packets in absolute slow motion, and passing snacks under monitors so colleagues and managers wouldn’t catch us. And whenever work got too hectic, sneaking up to the office rooftop with takeout bags of juicy burgers and crispy fries to feast in peace under the open sky!',
+    quote: '“Eat fast, someone is coming!” ... and “Let’s sneak up to the rooftop with burgers!”',
+    tags: ['#SecretSnackers', '#RooftopBurgers', '#StealthMode', '#TerraceVibes', '#WorkEscapes', '#BurgerLovers']
+  },
+  {
+    id: 'goofy_videos',
+    title: '4K Food Reels & Chaotic Memories',
+    subtitle: 'Camera roll 99% food & goofy clips 🎥',
+    date: 'Captured Forever in 4K',
+    badge: '🎥 Video Archives',
+    emoji: '🎥',
+    media: [
+      { type: 'emoji', value: '🎥', caption: 'Behind-the-scenes goofy reels' },
+      { type: 'emoji', value: '✨', caption: 'Unfiltered laughter & candid snaps' }
+    ],
+    notes: 'Our gallery is overflowing with candid food reactions, aesthetic slow-motion food pulls, unhinged laugh videos, and behind-the-scenes chaos. These clips document the most joyful chapters of our friendship.',
+    quote: '“Camera eats first, but bestie laughs first!”',
+    tags: ['#FoodieArchives', '#GoofyVideos', '#UnfilteredMemories', '#BFFCore']
+  }
+];
+
+let activeMemoryIndex = 0;
+let activeMemoryMediaIndex = 0;
+
+function openMemoryModal(idx) {
+  if (idx < 0 || idx >= MEMORY_KEEPSAKES.length) idx = 0;
+  activeMemoryIndex = idx;
+  activeMemoryMediaIndex = 0;
+  renderMemoryModalContent();
+  const overlay = document.getElementById('memoryModalOverlay');
+  if (overlay) {
+    overlay.classList.add('active');
+  }
+  playAudioFx('pop');
+}
+
+function closeMemoryModal() {
+  const overlay = document.getElementById('memoryModalOverlay');
+  if (overlay) {
+    overlay.classList.remove('active');
+    // Pause any playing videos
+    const stage = document.getElementById('memoryMediaStage');
+    if (stage) {
+      const video = stage.querySelector('video');
+      if (video) video.pause();
+    }
+  }
+}
+
+function renderMemoryModalContent() {
+  const mem = MEMORY_KEEPSAKES[activeMemoryIndex];
+  if (!mem) return;
+
+  const titleEl = document.getElementById('memoryModalTitle');
+  const badgeEl = document.getElementById('memoryModalBadge');
+  const metaEl = document.getElementById('memoryModalMeta');
+  const storyEl = document.getElementById('memoryStoryParagraph');
+  const quoteEl = document.getElementById('memoryQuoteText');
+  const quoteBanner = document.getElementById('memoryQuoteBanner');
+  const tagsEl = document.getElementById('memoryTagsList');
+  const indicatorEl = document.getElementById('memoryIndicator');
+  const reactBtn = document.getElementById('memoryReactBtn');
+
+  if (titleEl) titleEl.textContent = mem.title;
+  if (badgeEl) badgeEl.textContent = mem.badge || '📸 AESTHETIC KEEPSAKE';
+  if (metaEl) metaEl.textContent = `📍 ${mem.date}`;
+  if (storyEl) storyEl.textContent = mem.notes;
+  
+  if (quoteEl && quoteBanner) {
+    if (mem.quote) {
+      quoteEl.textContent = mem.quote;
+      quoteBanner.style.display = 'flex';
+    } else {
+      quoteBanner.style.display = 'none';
+    }
+  }
+
+  if (tagsEl) {
+    tagsEl.innerHTML = (mem.tags || []).map(t => `<span class="memory-tag-chip">${t}</span>`).join('');
+  }
+
+  if (indicatorEl) {
+    indicatorEl.textContent = `Memory ${activeMemoryIndex + 1} of ${MEMORY_KEEPSAKES.length}`;
+  }
+
+  // Reactions
+  const isReacted = localStorage.getItem('memory_react_' + mem.id) === 'true';
+  if (reactBtn) {
+    reactBtn.className = `memory-react-btn ${isReacted ? 'reacted' : ''}`;
+    reactBtn.innerHTML = `<span>${isReacted ? '💖' : '🤍'}</span> <span>${isReacted ? 'Loved Memory' : 'Cherish'}</span>`;
+  }
+
+  // Render Media Stage & Thumbnails
+  renderMemoryMedia();
+}
+
+function renderMemoryMedia() {
+  const mem = MEMORY_KEEPSAKES[activeMemoryIndex];
+  const stage = document.getElementById('memoryMediaStage');
+  const thumbs = document.getElementById('memoryThumbsRow');
+  if (!mem || !stage) return;
+
+  const currentMedia = mem.media && mem.media[activeMemoryMediaIndex] ? mem.media[activeMemoryMediaIndex] : { type: 'emoji', value: mem.emoji };
+
+  let mediaHtml = '';
+  if (currentMedia.type === 'image') {
+    mediaHtml = `
+      <img src="${currentMedia.src}" class="memory-stage-img" alt="${mem.title}" />
+      ${currentMedia.caption ? `<div class="memory-stage-caption">${currentMedia.caption}</div>` : ''}
+    `;
+  } else if (currentMedia.type === 'video') {
+    mediaHtml = `
+      <video src="${currentMedia.src}" class="memory-stage-video" controls autoplay loop playsinline></video>
+      ${currentMedia.caption ? `<div class="memory-stage-caption">${currentMedia.caption}</div>` : ''}
+    `;
+  } else {
+    // Emoji or gradient placeholder
+    mediaHtml = `
+      <div class="memory-stage-emoji">${currentMedia.value || mem.emoji || '📸'}</div>
+      ${currentMedia.caption ? `<div class="memory-stage-caption">${currentMedia.caption}</div>` : ''}
+    `;
+  }
+  stage.innerHTML = mediaHtml;
+
+  // Render thumbnails if there's more than 1 media item
+  if (thumbs) {
+    if (mem.media && mem.media.length > 1) {
+      thumbs.innerHTML = mem.media.map((m, mIdx) => `
+        <button class="memory-thumb-btn ${mIdx === activeMemoryMediaIndex ? 'active' : ''}" onclick="selectMemoryMedia(${mIdx})" aria-label="Media ${mIdx + 1}">
+          ${m.type === 'image' ? `<img src="${m.src}" alt="thumb" />` : m.type === 'video' ? '🎬' : (m.value || '📷')}
+        </button>
+      `).join('');
+      thumbs.style.display = 'flex';
+    } else {
+      thumbs.innerHTML = '';
+      thumbs.style.display = 'none';
+    }
+  }
+}
+
+function selectMemoryMedia(mIdx) {
+  activeMemoryMediaIndex = mIdx;
+  renderMemoryMedia();
+  playAudioFx('pop');
+}
+
+function prevMemory() {
+  activeMemoryIndex = (activeMemoryIndex - 1 + MEMORY_KEEPSAKES.length) % MEMORY_KEEPSAKES.length;
+  activeMemoryMediaIndex = 0;
+  renderMemoryModalContent();
+  playAudioFx('pop');
+}
+
+function nextMemory() {
+  activeMemoryIndex = (activeMemoryIndex + 1) % MEMORY_KEEPSAKES.length;
+  activeMemoryMediaIndex = 0;
+  renderMemoryModalContent();
+  playAudioFx('pop');
+}
+
+function reactToCurrentMemory() {
+  const mem = MEMORY_KEEPSAKES[activeMemoryIndex];
+  if (!mem) return;
+  const key = 'memory_react_' + mem.id;
+  const current = localStorage.getItem(key) === 'true';
+  const newState = !current;
+  localStorage.setItem(key, String(newState));
+
+  const reactBtn = document.getElementById('memoryReactBtn');
+  if (reactBtn) {
+    reactBtn.className = `memory-react-btn ${newState ? 'reacted' : ''}`;
+    reactBtn.innerHTML = `<span>${newState ? '💖' : '🤍'}</span> <span>${newState ? 'Loved Memory' : 'Cherish'}</span>`;
+  }
+  if (newState) {
+    createConfetti();
+    playAudioFx('fanfare');
+    showToast('💖 Memory marked as cherished forever! ✨', 2500);
+  }
+}
+
+// Global modal close handlers (ESC and click outside)
+document.addEventListener('keydown', e => {
+  const memoryOverlay = document.getElementById('memoryModalOverlay');
+  if (memoryOverlay && memoryOverlay.classList.contains('active')) {
+    if (e.key === 'Escape') {
+      closeMemoryModal();
+    } else if (e.key === 'ArrowLeft') {
+      prevMemory();
+    } else if (e.key === 'ArrowRight') {
+      nextMemory();
+    }
+  }
+});
+
+document.getElementById('memoryModalOverlay')?.addEventListener('click', e => {
+  if (e.target.id === 'memoryModalOverlay') {
+    closeMemoryModal();
+  }
+});
+
+// =====================================================
 // 7. AI DEV COMPLIMENT & ROAST GENERATOR
 // =====================================================
 const COMPLIMENTS = {
   sweet: [
-    `"✨ You see beauty in the smallest things — a font weight, a colour swatch, the way morning light hits. That rare sensitivity makes your designs feel like poetry." 🌸`,
-    `"If warmth and creativity had a human form, it would be you. The world is genuinely more beautiful because you exist in it." 💖`,
-    `"Your designs don't just look stunning — they tell stories, spark feelings, and stay with people long after they look away. That's the mark of a true artist." ✨`,
-    `"You bring your whole heart into everything you create. That's what separates good design from unforgettable design. You are unforgettable, Riya." 🌷`
+    `"Tujhse baat karke din ka sara office stress ek minute mein gayab ho jata hai. Genuinely, tere jaisi genuine aur pure-hearted dost milna 1 in a million blessing hai! 💖🌸"`,
+    `"Tere saath jo comfort aur masti hai na, woh kisi aur ke saath nahi. Bus ki commute ho ya desk ki baatein, you make every ordinary day feel super special. ✨"`,
+    `"Tu sirf ek graphic designer nahi hai, tu magic create karti hai. Teri aesthetic eye aur creativity itni next-level hai ki har koi inspire ho jaye! 🌷"`,
+    `"Jab bhi life mein koi problem ya confusion hoti hai, tu pehli insaan hoti hai jisko batane ka mann karta hai. Thank you for always being my safe space, bestie! 🥺❤️"`,
+    `"Teri smile aur unhinged laughing fits itne contagious hain na ki pura room automatically khush ho jata hai. Kabhi change mat hona! 🌸✨"`,
+    `"Duniya mein bohot log aate hain, par tere jaisa loyal, supportive aur hamesha saath khada rehne wala dost kismat se milta hai. Love you to bits! 💖"`
   ],
   roast: [
-    `"You have 47 Procreate brushes downloaded and you use the same 3 every time. We all see you." 😂`,
-    `"Your Figma file has layers named 'Final', 'Final v2', 'FINAL ACTUAL', and 'FINAL USE THIS ONE PLS'. Designer of the year!" 🌶️`,
-    `"You spend 45 minutes choosing the perfect font and then go with the one you picked first. True artistic process." 😆`,
-    `"You say 'just one more colour tweak' and then it's suddenly 2 AM and you've redesigned the entire thing. Hero behaviour honestly." 🌙`
+    `"11:30 AM pe bolti hai 'Mujhe bhook lag rahi hai', aur 12:00 PM pe bolti hai 'Chalo lift mein chupke cold drink peete hain!' Pakdi gayi! 😂🥤"`,
+    `"Office mein jab manager saamne se guzar raha hota hai, toh keyboard pe aise tez type karti hai jaise NASA ka rocket launch kar rahi ho, aur neeche chips chaba rahi hoti hai! 🤫🕵️‍♀️"`,
+    `"Rooftop pe bolti hai 'Bas 2 minute fresh air lene aaye hain' aur wahan khade khade akele aadha burger aur saare crispy fries khatam kar deti hai! 🍔😆"`,
+    `"Bus mein bolti hai 'Main bilkul nahi soungi, pura rasta baat karenge', aur agle 2 minute mein window pe sir tika ke deep sleep mode ON! 🚌💤"`,
+    `"Phone ki 128GB storage 99% khane ke photos aur meri ajeeb ugly candid videos se bhar rakhi hai! Delete karne ko bolo toh 'Nahi ye core memory hai' bolti hai! 📸🤣"`,
+    `"Procreate mein 50 brushes download karke rakhegi, par artwork banate time wahi same 2 default brushes use karegi! Designer of the year! 🎨🌶️"`
   ],
   dev: [
-    `"Your colour palettes are curated like playlists — every single tone in perfect harmony, saying exactly the right thing." 🎨`,
-    `"If design was a love language, you'd be fluent in all five. Negative space, typography, contrast, layout, and pure aesthetic magic." ❤️`,
-    `"Every pixel you place has a reason. Every curve has intention. You don't just design — you compose visual symphonies." 🎶`,
-    `"Riya.design is the only brand that matters. Lucky the world gets to experience it." 💎`
+    `"Jaise burger bina crispy fries ke adhoora hai, waise meri office life aur daily routine tere bina adhoori hai! 🍔🍟❤️"`,
+    `"Hamari dosti bilkul pizza ke cheese pull jaisi hai — strong, satisfying aur pure comfort! 🍕✨"`,
+    `"Office ki sabse badi achievement appraisal ya hike nahi, balki 1 km door rehne wali tere jaisi pagal bestie milna hai! 🏆🏡"`,
+    `"Lift mein chupke cold drink peena aur desk ke neeche snacks share karna — this is true VIP five-star luxury friendship! 🥤🤫"`,
+    `"Agar foodie hone ka koi Oscar hota na, toh hum dono har saal trophy jeet te! Always hungry, always together! 🥇🍱"`
   ]
 };
 
@@ -2372,52 +2658,46 @@ function restartMemoryGame() {
 /* LEVEL 2: BFF Quiz */
 const quizData = [
   {
-    q: '🌅 Where did our friendship first kick off?',
-    opts: ['At a party 🎉', 'At college / work 🎓', 'Through mutual friends 👥', 'Online / Social media 📱'],
+    q: '🍱 How did our friendship first spark in the office?',
+    opts: ['Sharing snacks & desk food banter 🍱', 'At a formal meeting 📋', 'Through mutual friends 👥', 'Random email 📧'],
     correct: 0,
-    fun: 'The most legendary beginning ever!'
+    fun: 'Food brought us together and we never looked back! 😋'
   },
   {
-    q: '☕ What is Riya\'s go-to comfort drink when feeling creative?',
-    opts: ['Espresso ☕', 'Kadak Chai 🍵', 'Hot Cocoa 🍫', 'Boba Tea 🧋'],
+    q: '📍 What was the crazy plot twist about our houses?',
+    opts: ['We live 25 km apart 🗺️', 'Just 1 km distance! 🏡', 'Same society 🏢', 'Different cities ✈️'],
     correct: 1,
-    fun: 'Chai o\'clock fuels every masterpiece!'
+    fun: '1 km apart — destined to be daily commute partners! 🚌'
   },
   {
-    q: '🎨 What is Riya\'s absolute design superpower?',
-    opts: ['Colour palettes 🌈', 'Typography 🔤', 'Illustration ✏️', 'Layout & spacing ⬛'],
+    q: '🚌 What did our daily bus rides turn into?',
+    opts: ['A silent study hall 📚', 'A moving canteen & snack session 🥪', 'Power nap zone 💤', 'Boring commute 😐'],
+    correct: 1,
+    fun: 'Eating snacks, sharing gossip, and laughing the whole ride!'
+  },
+  {
+    q: '📸 What is our camera roll and video gallery mostly filled with?',
+    opts: ['Serious office spreadsheets 📊', 'Delicious food, cafe treats & goofy clips 🍕🎥', 'Random screenshots 📱', 'Landscape scenery 🌲'],
+    correct: 1,
+    fun: 'Certified foodies with infinite food reels and snaps!'
+  },
+  {
+    q: '🍕 What is our uncontested go-to food craving?',
+    opts: ['Cheesy Pizza & Street Treats 🍕', 'Plain Salad 🥗', 'Boiled Veggies 🥦', 'Protein Shake 🥤'],
     correct: 0,
-    fun: 'Her colour sense is literally unmatched!'
+    fun: 'Foodie soulmates always ready for a feast!'
   },
   {
-    q: '🌍 My ultimate dream vacation spot is?',
-    opts: ['Tokyo, Japan 🇯🇵', 'Amalfi Coast, Italy 🇮🇹', 'Maldives 🏝️', 'Swiss Alps 🏔️'],
-    correct: 2,
-    fun: 'Clear water, golden sun, and zero deadlines!'
-  },
-  {
-    q: '🍕 What is the uncontested 2 AM midnight food craving?',
-    opts: ['Pizza 🍕', 'Biryani 🍛', 'Ice Cream 🍦', 'Maggi Noodles 🍜'],
+    q: '💖 What makes our friendship so special?',
+    opts: ['Unconditional support & non-stop laughs ✨', 'Sharing every meal together 🍱', 'Zero awkwardness ever 🌟', 'All of the above times a million! 🙌'],
     correct: 3,
-    fun: '2 AM Maggi hits differently every single time!'
-  },
-  {
-    q: '💖 What is Riya\'s hidden superpower?',
-    opts: ['Making everyone feel seen 😊', 'Spotting bad fonts instantly 👀', 'Finishing designs fast ⚡', 'Being everyone\'s mood lifter 🌟'],
-    correct: 0,
-    fun: 'She makes every single person feel valued and beautiful!'
-  },
-  {
-    q: '🎥 Which kind of movie night guarantees maximum fun?',
-    opts: ['Horror 👻', 'Comedy & Romcom 😂', 'Sci-Fi Mind Bender 🚀', 'True Crime Thriller 🔍'],
-    correct: 1,
-    fun: 'Because laughing until our stomachs hurt is mandatory!'
+    fun: 'From office buddies to inseparable best friends!'
   },
   {
     q: '🎂 How do we celebrate Riya on her birthday?',
-    opts: ['With all the love 💖', 'Cake, gifts & chaos 🎉', 'Endlessly hype her up ✨', 'All of the above times ten 🙌'],
+    opts: ['With all the love 💖', 'Gifts, cake & foodie feast 🎉', 'Hype her up endlessly ✨', 'All of the above times infinity! 🥳'],
     correct: 3,
-    fun: 'She deserves every single bit of it!'
+    fun: 'She deserves the most magical birthday ever!'
   }
 ];
 
