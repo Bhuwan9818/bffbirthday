@@ -1519,8 +1519,11 @@ function closeCartDrawer() {
 document.getElementById('cartBtn')?.addEventListener('click', openCartDrawer);
 
 // Checkout Modal & Silent Order Dispatch
-const ADMIN_WHATSAPP = '919818404944'; // Your WhatsApp number
-let CALLMEBOT_API_KEY = ''; // Paste your CallMeBot API key here (e.g. '1234567')
+const ADMIN_WHATSAPP = '919818404944';
+
+// 🤖 Telegram Bot Configuration (100% Free & Instant phone alerts)
+let TELEGRAM_BOT_TOKEN = '8226257340:AAECHhMJv90Kt_XI61ThFUUkdc6_3TayalY'; // e.g. '1234567890:ABCdefGhIJKlmNoPQRsTUVwxyZ'
+let TELEGRAM_CHAT_ID = '7082860137';   // e.g. '123456789'
 
 function openCheckoutModal() {
   closeCartDrawer();
@@ -1664,7 +1667,7 @@ function closeReceiptModal() {
   document.getElementById('receiptModalOverlay')?.classList.remove('active');
 }
 
-function getOrderSummaryMessage(order) {
+function getOrderSummaryMessage(order, format = 'text') {
   const data = order || activeOrderData;
   if (!data) return '';
 
@@ -1672,29 +1675,45 @@ function getOrderSummaryMessage(order) {
     ? data.items.map(i => `• ${i.emoji} ${i.title} (Qty: ${i.qty}) - ₹${i.itemTotal}`).join('\n')
     : '• No items selected (Checked in)';
 
+  if (format === 'html') {
+    return `🎂 <b>BIRTHDAY GIFT VAULT ORDER</b> 🎁\n<b>Order ID:</b> <code>#${data.orderId}</code>\n<b>Date:</b> ${data.dateStr}\n\n<b>Selected Gifts:</b>\n${itemsText}\n\n💰 <b>Total Budget:</b> ₹${data.total}\n\n✅ <i>Checked out from Birthday Website!</i>`;
+  }
+
   return `🎂 *BIRTHDAY GIFT VAULT ORDER* 🎁\nOrder ID: #${data.orderId}\nDate: ${data.dateStr}\n\n${itemsText}\n\n💰 *Total Value:* ₹${data.total}\n\n✅ Checked out from Birthday Website!`;
 }
 
 // Background silent notification (does not open WhatsApp or any apps on visitor's device)
 function silentSendOrderNotification(order) {
   if (!order) return;
-  const summaryMsg = getOrderSummaryMessage(order);
-  console.log('📦 Order placed silently:', summaryMsg);
+  const summaryHtml = getOrderSummaryMessage(order, 'html');
+  const summaryPlain = getOrderSummaryMessage(order, 'text');
+  console.log('📦 Order placed silently:', summaryPlain);
 
-  // 1. WhatsApp Delivery via CallMeBot (100% Free & Silent)
-  const callMeBotKey = CALLMEBOT_API_KEY || localStorage.getItem('callmebot_api_key') || window.CALLMEBOT_API_KEY;
-  if (callMeBotKey && ADMIN_WHATSAPP) {
-    const endpoint = `https://api.callmebot.com/whatsapp.php?phone=${ADMIN_WHATSAPP}&text=${encodeURIComponent(summaryMsg)}&apikey=${callMeBotKey}`;
-    try {
-      fetch(endpoint, { mode: 'no-cors' }).catch(() => {});
-      const beaconImg = new Image();
-      beaconImg.src = endpoint;
-    } catch (err) {
-      console.warn('CallMeBot notification error:', err);
-    }
+  // 1. 🤖 Telegram Bot Dispatch (Instant phone alert with formatted invoice)
+  const tgToken = TELEGRAM_BOT_TOKEN || localStorage.getItem('tg_bot_token') || window.TELEGRAM_BOT_TOKEN;
+  const tgChat = TELEGRAM_CHAT_ID || localStorage.getItem('tg_chat_id') || window.TELEGRAM_CHAT_ID;
+  if (tgToken && tgChat) {
+    const tgEndpoint = `https://api.telegram.org/bot${tgToken}/sendMessage`;
+    fetch(tgEndpoint, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        chat_id: tgChat,
+        text: summaryHtml,
+        parse_mode: 'HTML'
+      })
+    })
+    .then(res => res.json())
+    .then(data => console.log('✅ Telegram bot order dispatched successfully:', data))
+    .catch(err => {
+      console.warn('Telegram POST failed, attempting GET fallback:', err);
+      // Fallback via GET
+      const getUrl = `https://api.telegram.org/bot${tgToken}/sendMessage?chat_id=${tgChat}&text=${encodeURIComponent(summaryPlain)}`;
+      fetch(getUrl).catch(e => console.error('Telegram GET fallback error:', e));
+    });
   }
 
-  // 2. Custom Webhook / Telegram Bot / Discord / Formspree (Silent Background ping)
+  // 2. Custom Webhook / Discord / Formspree (Silent Background ping)
   const webhookUrl = localStorage.getItem('order_webhook_url') || window.ORDER_WEBHOOK_URL;
   if (webhookUrl) {
     try {
