@@ -2248,7 +2248,7 @@ const MEMORY_KEEPSAKES = [
       { type: 'image', src: 'images/pizza.jpeg', caption: 'Loaded pizza feasts & cheese pulls 🍕' },
       { type: 'video', src: 'videos/pizza.mp4', caption: 'Cheesy pizza party video 🍕' }
     ],
-    notes: 'Nothing beats devouring hot, loaded pizzas together after a hectic day! From debating over the best crusts to fighting for the last slice of cheesy garlic bread, our food adventures are always top-tier.',
+    notes: 'Nothing beats devouring hot, loaded pizzas together after a hectic day! From debating over the best crusts to fighting for the last slice of cheesy pizza, our food adventures are always top-tier.',
     quote: '“There is always room for pizza. Always.”',
     tags: ['#PizzaParty', '#CheesePulls', '#FoodieSoulmates', '#CheatMealAlways']
   },
@@ -2260,6 +2260,7 @@ const MEMORY_KEEPSAKES = [
     badge: '🥤 Lift Drinks & Banter',
     emoji: '🥤',
     media: [
+      { type: 'image', src: 'images/drink.jpeg', caption: 'Unhinged candid moments & laughter 📸' },
       { type: 'video', src: 'videos/drink.mp4', caption: 'Sneaking cold drinks in the lift lobby 🥤🛗' }
     ],
     notes: 'Since neither of us drinks tea, official office “tea breaks” meant one thing: grabbing chilled cold drinks, fruit juices, or sodas, secretly sneaking into the lift / elevator lobby to drink undercover, spilling all the office tea, and laughing our hearts out before heading back to our desks!',
@@ -2274,6 +2275,7 @@ const MEMORY_KEEPSAKES = [
     badge: '🤫 Stealth Snackers & Rooftop Feasts',
     emoji: '🤫',
     media: [
+      { type: 'image', src: 'images/secret.jpeg', caption: 'Unhinged candid moments & laughter 📸' },
       { type: 'video', src: 'videos/secret.mp4', caption: 'Secret desk snacking & rooftop burger video 🤫🍔' }
     ],
     notes: 'The ultimate office thrills! Sneaking bites while furiously typing on the keyboard to look busy, opening crunchy chip packets in absolute slow motion, and passing snacks under monitors so colleagues and managers wouldn’t catch us. And whenever work got too hectic, sneaking up to the office rooftop with takeout bags of juicy burgers and crispy fries to feast in peace under the open sky!',
