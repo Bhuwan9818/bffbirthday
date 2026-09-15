@@ -764,13 +764,14 @@ if (!isCoarsePointer) {
   bindHoverCursors();
 }
 
-// Canvas Stars & Confetti - Ultra High Performance
+// Canvas Ambient Sakura, Shimmer & Confetti - Ultra High Performance
 const canvas = document.getElementById('bgCanvas');
 const ctx = canvas ? canvas.getContext('2d', { alpha: true }) : null;
-let stars = [];
+let ambientParticles = [];
 let confettiParticles = [];
 let isConfettiActive = false;
 let confettiRafId = null;
+let ambientRafId = null;
 
 function resizeCanvas() {
   if (!canvas || !ctx) return;
@@ -783,42 +784,103 @@ function resizeCanvas() {
   canvas.style.height = h + 'px';
   ctx.resetTransform();
   ctx.scale(dpr, dpr);
-  createStars(w, h);
-  drawStaticStars(w, h);
+  createAmbientParticles(w, h);
 }
 
-function createStars(w, h) {
-  stars = [];
-  const starCount = w < 768 ? 35 : 65;
-  for (let i = 0; i < starCount; i++) {
-    stars.push({
+function createAmbientParticles(w, h) {
+  ambientParticles = [];
+  const count = w < 768 ? 28 : 55;
+  const petalColors = [
+    'rgba(244, 114, 182, 0.45)', // soft rose
+    'rgba(251, 113, 133, 0.4)',  // blush pink
+    'rgba(249, 168, 212, 0.55)', // sakura
+    'rgba(251, 191, 36, 0.35)',  // champagne gold
+    'rgba(236, 72, 153, 0.4)',   // vivid rose
+  ];
+
+  for (let i = 0; i < count; i++) {
+    const isPetal = Math.random() > 0.4;
+    ambientParticles.push({
       x: Math.random() * w,
       y: Math.random() * h,
-      r: Math.random() * 1.5 + 0.5,
-      alpha: Math.random() * 0.7 + 0.2,
+      size: isPetal ? (Math.random() * 8 + 6) : (Math.random() * 3 + 1),
+      speedY: isPetal ? (Math.random() * 0.8 + 0.3) : (Math.random() * 0.4 + 0.1),
+      speedX: isPetal ? (Math.random() * 0.6 - 0.3) : (Math.random() * 0.3 - 0.15),
+      sway: Math.random() * 100,
+      swaySpeed: Math.random() * 0.02 + 0.01,
+      color: petalColors[Math.floor(Math.random() * petalColors.length)],
+      rotation: Math.random() * 360,
+      rotSpeed: (Math.random() - 0.5) * 1.5,
+      isPetal: isPetal,
+      alpha: Math.random() * 0.5 + 0.3
     });
   }
 }
 
-function drawStaticStars(w, h) {
+function drawAmbient() {
   if (!ctx || !canvas) return;
-  const width = w || window.innerWidth;
-  const height = h || window.innerHeight;
-  ctx.clearRect(0, 0, width, height);
-  for (let i = 0; i < stars.length; i++) {
-    const s = stars[i];
-    ctx.beginPath();
-    ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
-    ctx.fillStyle = `rgba(255,255,255,${s.alpha})`;
-    ctx.fill();
+  const w = window.innerWidth;
+  const h = window.innerHeight;
+  ctx.clearRect(0, 0, w, h);
+
+  for (let i = 0; i < ambientParticles.length; i++) {
+    const p = ambientParticles[i];
+    p.sway += p.swaySpeed;
+    p.y += p.speedY;
+    p.x += p.speedX + Math.sin(p.sway) * 0.35;
+    p.rotation += p.rotSpeed;
+
+    if (p.y > h + 20) {
+      p.y = -15;
+      p.x = Math.random() * w;
+    }
+    if (p.x > w + 20) p.x = -15;
+    if (p.x < -20) p.x = w + 15;
+
+    ctx.save();
+    ctx.translate(p.x, p.y);
+    ctx.rotate((p.rotation * Math.PI) / 180);
+
+    if (p.isPetal) {
+      // Draw delicate sakura petal
+      ctx.fillStyle = p.color;
+      ctx.beginPath();
+      ctx.moveTo(0, -p.size);
+      ctx.bezierCurveTo(p.size * 0.8, -p.size * 0.5, p.size * 0.8, p.size * 0.5, 0, p.size);
+      ctx.bezierCurveTo(-p.size * 0.8, p.size * 0.5, -p.size * 0.8, -p.size * 0.5, 0, -p.size);
+      ctx.fill();
+    } else {
+      // Draw shimmering sparkle / bokeh orb
+      ctx.fillStyle = p.color;
+      ctx.beginPath();
+      ctx.arc(0, 0, p.size, 0, Math.PI * 2);
+      ctx.fill();
+    }
+    ctx.restore();
   }
 }
 
+function startAmbientLoop() {
+  if (ambientRafId) cancelAnimationFrame(ambientRafId);
+  function loop() {
+    drawAmbient();
+    if (isConfettiActive) {
+      drawConfetti();
+    }
+    ambientRafId = requestAnimationFrame(loop);
+  }
+  ambientRafId = requestAnimationFrame(loop);
+}
+
 resizeCanvas();
+startAmbientLoop();
+
 let resizeCanvasTimer;
 window.addEventListener('resize', () => {
   clearTimeout(resizeCanvasTimer);
-  resizeCanvasTimer = setTimeout(resizeCanvas, 150);
+  resizeCanvasTimer = setTimeout(() => {
+    resizeCanvas();
+  }, 150);
 }, { passive: true });
 
 function triggerCongratsConfetti() {
@@ -832,34 +894,25 @@ function createConfetti() {
   const w = window.innerWidth;
   confettiParticles = [];
   isConfettiActive = true;
-  const colors = ['#ff5e98', '#a855f7', '#06b6d4', '#fbbf24', '#10b981', '#f43f5e', '#3b82f6'];
-  const count = w < 768 ? 80 : 160;
+  const colors = ['#f43f5e', '#ec4899', '#f472b6', '#fbbf24', '#fde047', '#c084fc', '#fb7185'];
+  const count = w < 768 ? 70 : 140;
   for (let i = 0; i < count; i++) {
     confettiParticles.push({
       x: Math.random() * w,
       y: -30,
-      w: Math.random() * 12 + 6,
-      h: Math.random() * 8 + 4,
+      w: Math.random() * 10 + 5,
+      h: Math.random() * 7 + 3,
       color: colors[Math.floor(Math.random() * colors.length)],
-      speedY: Math.random() * 4.5 + 2.5,
-      speedX: (Math.random() - 0.5) * 4,
+      speedY: Math.random() * 4 + 2.5,
+      speedX: (Math.random() - 0.5) * 3.5,
       rotation: Math.random() * 360,
-      rotationSpeed: (Math.random() - 0.5) * 9,
+      rotationSpeed: (Math.random() - 0.5) * 8,
     });
-  }
-  
-  if (!confettiRafId) {
-    confettiRafId = requestAnimationFrame(animateConfettiLoop);
   }
 
   setTimeout(() => {
     isConfettiActive = false;
     confettiParticles = [];
-    if (confettiRafId) {
-      cancelAnimationFrame(confettiRafId);
-      confettiRafId = null;
-    }
-    drawStaticStars();
   }, 5000);
 }
 
@@ -882,15 +935,6 @@ function drawConfetti() {
     ctx.fillRect(-p.w / 2, -p.h / 2, p.w, p.h);
     ctx.restore();
   });
-}
-
-function animateConfettiLoop() {
-  if (!isConfettiActive) return;
-  const w = window.innerWidth;
-  const h = window.innerHeight;
-  drawStaticStars(w, h);
-  drawConfetti();
-  confettiRafId = requestAnimationFrame(animateConfettiLoop);
 }
 
 // =====================================================
@@ -1799,24 +1843,22 @@ function initScratchCards() {
     let isDrawing = false;
     let isRevealed = false;
 
-    // Fill with metallic silver / violet foil
+    // Fill with metallic rose-gold / pink foil
     function fillOverlay() {
-      ctx.fillStyle = '#9ca3af';
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-      // Add shimmer pattern
+      // Shimmering Rose Gold gradient
       const grad = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
-      grad.addColorStop(0, '#6b7280');
-      grad.addColorStop(0.3, '#d1d5db');
-      grad.addColorStop(0.5, '#f3f4f6');
-      grad.addColorStop(0.7, '#9ca3af');
-      grad.addColorStop(1, '#4b5563');
+      grad.addColorStop(0, '#f472b6');
+      grad.addColorStop(0.25, '#fbbf24');
+      grad.addColorStop(0.5, '#fce7f3');
+      grad.addColorStop(0.75, '#fb7185');
+      grad.addColorStop(1, '#ec4899');
       ctx.fillStyle = grad;
       ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-      ctx.fillStyle = '#374151';
-      ctx.font = 'bold 16px Outfit, sans-serif';
+      ctx.fillStyle = '#4a044e';
+      ctx.font = 'bold 15px Outfit, sans-serif';
       ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
       ctx.fillText('✨ SCRATCH TO REVEAL ✨', canvas.width / 2, canvas.height / 2);
     }
     fillOverlay();
