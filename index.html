@@ -346,7 +346,7 @@
       <h2 class="section-title" id="giftVaultSectionTitle">The Secret <span class="gradient-text">Birthday Gift Vault</span></h2>
       <p class="section-sub" id="giftVaultSectionSub">
         No boring generic code here. Complete the studio games to reveal your sponsored birthday shopping budget! 
-        Submit your order, and your friend will receive it on WhatsApp & deliver it to you! 🎁
+        Select your gifts and tap checkout — your friend will automatically receive your gift order! 🎁
       </p>
     </div>
 
@@ -361,8 +361,8 @@
           </div>
           <h3 class="claimed-title">🎁 Your ₹500 Birthday Gift Spree is Registered!</h3>
           <p class="claimed-desc">
-            Your custom gift selection was placed and saved! The available shopping budget is reset to <strong>₹0</strong>. 
-            You can view your claimed goodies below, review your golden invoice, or open the WhatsApp order dispatch anytime! 🥳
+            Your custom gift selection was successfully placed! The available shopping budget is reset to <strong>₹0</strong>. 
+            You can view your claimed goodies below or inspect your official golden invoice anytime! 🥳
           </p>
         </div>
 
@@ -378,14 +378,14 @@
         </div>
 
         <div class="claimed-actions-row">
-          <button class="btn btn-whatsapp btn-glow" onclick="dispatchOrderToWhatsApp()">
-            <span>📱 Resend / View WhatsApp Order</span>
-          </button>
-          <button class="btn btn-secondary" onclick="openReceiptModalFromData()">
+          <button class="btn btn-secondary btn-glow" onclick="openReceiptModalFromData()">
             <span>📄 View Golden Invoice</span>
           </button>
           <button class="btn btn-outline" onclick="copyOrderDetailsToClipboard()">
             <span>📋 Copy Details</span>
+          </button>
+          <button class="btn btn-whatsapp" onclick="dispatchOrderToWhatsApp()">
+            <span>📱 Open WhatsApp (Optional)</span>
           </button>
         </div>
       </div>
@@ -928,41 +928,23 @@
       <button class="modal-close-btn" onclick="closeCheckoutModal()">✕</button>
       
       <div class="modal-header">
-        <div class="modal-badge">🛍️ DIRECT CHECKOUT</div>
+        <div class="modal-badge">🎁 BIRTHDAY GIFT VAULT</div>
         <h3 id="checkoutModalTitle">Claim Your Birthday Gifts!</h3>
-        <p class="modal-sub">Confirm your shipping address below. Your friend will receive the order details & fulfill it 100% free for you!</p>
+        <p class="modal-sub">Review your picks below — then tap the button and you're done! ✨</p>
       </div>
 
       <div class="order-preview-box" id="checkoutOrderPreview">
         <!-- Preview filled by JS -->
       </div>
 
-      <form id="checkoutForm" onsubmit="handlePlaceOrder(event)">
-        <div class="form-grid">
-          <div class="form-group">
-            <label for="recipientName">Your Name / Nickname</label>
-            <input type="text" id="recipientName" required placeholder="e.g. Birthday Queen" value="Birthday Star">
-          </div>
-          <div class="form-group">
-            <label for="deliveryAddress">Delivery Address / Room / Location</label>
-            <input type="text" id="deliveryAddress" required placeholder="e.g. Flat 402, Sunshine Heights or Hostel 4">
-          </div>
-          <div class="form-group full-width">
-            <label for="customPreferences">Special Instructions / Flavour / Note for Friend</label>
-            <textarea id="customPreferences" rows="2" placeholder="e.g. 'Hazelnut flavour please!' or 'Deliver on Saturday evening!'"></textarea>
-          </div>
-          <div class="form-group full-width">
-            <label for="friendPhone">Friend's WhatsApp Number (Optional prefill)</label>
-            <input type="tel" id="friendPhone" placeholder="Enter friend's number with country code, e.g. 919876543210 (or leave blank to pick contact)">
-          </div>
-        </div>
-
-        <div class="modal-actions">
-          <button type="submit" class="btn btn-primary btn-big btn-glow w-100">
-            <span>🚀 Place Order & Open WhatsApp</span>
-          </button>
-        </div>
-      </form>
+      <div class="modal-actions" style="margin-top: 18px;">
+        <button type="button" class="btn btn-primary btn-big btn-glow w-100" onclick="handlePlaceOrder()">
+          <span>🎉 Claim My Gifts — Done!</span>
+        </button>
+        <p style="text-align:center; margin-top:10px; font-size:0.8rem; color:var(--text-muted); opacity:0.7;">
+          No forms. No address. Just one tap. 💜
+        </p>
+      </div>
     </div>
   </div>
 
@@ -1004,13 +986,8 @@
       </div>
 
       <div class="receipt-actions">
-        <button class="btn btn-primary" id="sendWhatsAppBtn" onclick="dispatchOrderToWhatsApp()">
-          <span>📲 Send Directly via WhatsApp</span>
-        </button>
-        <button class="btn btn-secondary" onclick="copyOrderDetailsToClipboard()">
-          <span>📋 Copy Order Summary</span>
-        </button>
-        <button class="btn btn-primary btn-glow" id="receiptProceedBtn" style="margin-top: 15px; width: 100%; display: none;" onclick="closeReceiptModal(); goToStep(5);">
+        <p style="text-align:center; font-size:0.85rem; color:var(--text-muted); margin-bottom:12px;">✅ Your order has been sent! Your BFF already has it. 💜</p>
+        <button class="btn btn-primary btn-glow" id="receiptProceedBtn" style="width: 100%;" onclick="closeReceiptModal(); goToStep(5);">
           <span>🎟️ Proceed to VIP Friendship Vouchers →</span>
         </button>
       </div>

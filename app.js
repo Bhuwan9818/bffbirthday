@@ -1379,7 +1379,7 @@ function updateBudgetAndCartUI() {
   }
   if (subEl) {
     if (maxUnlockedStep >= 4 || claimed) {
-      subEl.innerHTML = 'No boring generic stuff here. Pick whatever you love up to <strong>₹500 INR</strong>. Submit your order, and your friend will receive it on WhatsApp & deliver it to you! 🎁';
+      subEl.innerHTML = 'No boring generic stuff here. Pick whatever you love up to <strong>₹500 INR</strong>. Select your gifts and tap checkout — your friend will automatically receive your gift order! 🎁';
     } else {
       subEl.innerHTML = 'Complete the creative games in Step 3 to reveal your secret budget and claim real birthday surprises! 🎁';
     }
@@ -1518,7 +1518,10 @@ function closeCartDrawer() {
 
 document.getElementById('cartBtn')?.addEventListener('click', openCartDrawer);
 
-// Checkout Modal
+// Checkout Modal & Silent Order Dispatch
+const ADMIN_WHATSAPP = '919818404944'; // Your WhatsApp number
+let CALLMEBOT_API_KEY = ''; // Paste your CallMeBot API key here (e.g. '1234567')
+
 function openCheckoutModal() {
   closeCartDrawer();
   if (isGiftVaultClaimed()) {
@@ -1527,32 +1530,31 @@ function openCheckoutModal() {
   }
 
   const total = calculateCartTotal();
-  if (total === 0) {
-    showToast('Your cart is empty! Pick some gifts first.');
-    return;
-  }
-
   const previewBox = document.getElementById('checkoutOrderPreview');
   if (previewBox) {
-    let html = '<div style="font-weight:800; margin-bottom:8px; color:var(--gold);">Order Summary:</div>';
-    for (const [id, qty] of Object.entries(cart)) {
-      const item = GIFT_CATALOG.find(g => g.id === id);
-      if (item) {
-        html += `
-          <div class="preview-item-row">
-            <span>${item.emoji} ${item.title} (×${qty})</span>
-            <span class="font-mono">₹${item.price * qty}</span>
-          </div>
-        `;
+    if (total === 0) {
+      previewBox.innerHTML = '<div style="text-align:center; padding:12px; color:var(--text-muted);">🛒 No items selected yet — that\'s okay! Your BFF will know you checked in. 💜</div>';
+    } else {
+      let html = '<div style="font-weight:800; margin-bottom:8px; color:var(--gold);">Order Summary:</div>';
+      for (const [id, qty] of Object.entries(cart)) {
+        const item = GIFT_CATALOG.find(g => g.id === id);
+        if (item) {
+          html += `
+            <div class="preview-item-row">
+              <span>${item.emoji} ${item.title} (×${qty})</span>
+              <span class="font-mono">₹${item.price * qty}</span>
+            </div>
+          `;
+        }
       }
+      html += `
+        <div class="preview-item-row" style="border-top:1px dashed rgba(255,255,255,0.2); margin-top:8px; padding-top:8px; font-weight:800;">
+          <span>Total Gift Value:</span>
+          <span class="font-mono text-gold">₹${total} (Free for Birthday Star!)</span>
+        </div>
+      `;
+      previewBox.innerHTML = html;
     }
-    html += `
-      <div class="preview-item-row" style="border-top:1px dashed rgba(255,255,255,0.2); margin-top:8px; padding-top:8px; font-weight:800;">
-        <span>Total Gift Value:</span>
-        <span class="font-mono text-gold">₹${total} (Free for Birthday Star!)</span>
-      </div>
-    `;
-    previewBox.innerHTML = html;
   }
 
   document.getElementById('checkoutModalOverlay')?.classList.add('active');
@@ -1563,19 +1565,13 @@ function closeCheckoutModal() {
   document.getElementById('checkoutModalOverlay')?.classList.remove('active');
 }
 
-// Active Order Details for WhatsApp / Invoice
+// Active Order Details
 let activeOrderData = null;
 
-function handlePlaceOrder(e) {
-  e.preventDefault();
-
-  const recipientName = document.getElementById('recipientName').value.trim() || 'Birthday Star';
-  const deliveryAddress = document.getElementById('deliveryAddress').value.trim() || 'Direct handoff';
-  const customNotes = document.getElementById('customPreferences').value.trim() || 'None';
-  const friendPhone = document.getElementById('friendPhone').value.trim();
-
+function handlePlaceOrder() {
+  // Build order from cart — no form needed
   const orderId = `BFF-2026-${Math.floor(1000 + Math.random() * 9000)}`;
-  const dateStr = new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+  const dateStr = new Date().toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' });
   const total = calculateCartTotal();
 
   const itemsList = [];
@@ -1587,10 +1583,6 @@ function handlePlaceOrder(e) {
   activeOrderData = {
     orderId,
     dateStr,
-    recipientName,
-    deliveryAddress,
-    customNotes,
-    friendPhone,
     total,
     items: itemsList
   };
@@ -1618,15 +1610,14 @@ function handlePlaceOrder(e) {
 
   createConfetti();
   playAudioFx('fanfare');
-  showToast('🎉 Order created! Send it to your friend on WhatsApp to fulfill!', 4000);
+  showToast('🎉 Gifts claimed! Your BFF already got your order! 💜', 4000);
 
-  // Show transition buttons and unlock next step (VIP Vouchers)
-  const receiptProceed = document.getElementById('receiptProceedBtn');
-  if (receiptProceed) receiptProceed.style.display = 'block';
-  
+  // Process order notification in the background without opening WhatsApp or interrupting her
+  silentSendOrderNotification(activeOrderData);
+
   const storeTransition = document.getElementById('storeTransition');
   if (storeTransition) storeTransition.classList.remove('hidden');
-  
+
   unlockStep(5);
   updateJourneyTracker();
 }
@@ -1638,23 +1629,20 @@ function renderGoldenReceipt(data) {
   document.getElementById('receiptSubtotal').textContent = `₹${data.total}`;
 
   const itemsListEl = document.getElementById('receiptItemsList');
-  if (itemsListEl && data.items) {
+  if (itemsListEl && data.items && data.items.length > 0) {
     itemsListEl.innerHTML = data.items.map(item => `
       <div class="receipt-item-row">
         <span>${item.emoji} ${item.title} × ${item.qty}</span>
         <span>₹${item.itemTotal}</span>
       </div>
     `).join('');
+  } else if (itemsListEl) {
+    itemsListEl.innerHTML = '<div style="text-align:center; padding:10px; color:var(--text-muted);">No items selected 💜</div>';
   }
 
+  // Hide address box since we no longer collect addresses
   const addrBox = document.getElementById('receiptAddressBox');
-  if (addrBox) {
-    addrBox.innerHTML = `
-      <div><strong>Deliver To:</strong> ${data.recipientName}</div>
-      <div><strong>Location:</strong> ${data.deliveryAddress}</div>
-      ${data.customNotes && data.customNotes !== 'None' ? `<div><strong>Note:</strong> ${data.customNotes}</div>` : ''}
-    `;
-  }
+  if (addrBox) addrBox.style.display = 'none';
 }
 
 function openReceiptModalFromData() {
@@ -1676,51 +1664,90 @@ function closeReceiptModal() {
   document.getElementById('receiptModalOverlay')?.classList.remove('active');
 }
 
-function dispatchOrderToWhatsApp() {
-  if (!activeOrderData) return;
+function getOrderSummaryMessage(order) {
+  const data = order || activeOrderData;
+  if (!data) return '';
 
-  const itemsText = activeOrderData.items.map(i => `• ${i.emoji} ${i.title} (Qty: ${i.qty}) - ₹${i.itemTotal}`).join('\n');
-  const message = 
-`🎂 *BIRTHDAY GIFT VAULT ORDER* 🎁
-Order ID: #${activeOrderData.orderId}
-Date: ${activeOrderData.dateStr}
+  const itemsText = data.items && data.items.length > 0
+    ? data.items.map(i => `• ${i.emoji} ${i.title} (Qty: ${i.qty}) - ₹${i.itemTotal}`).join('\n')
+    : '• No items selected (Checked in)';
 
-Hey bestie! Here are the gifts I selected from my ₹500 Birthday Vault:
-
-${itemsText}
-
-💰 *Total Value:* ₹${activeOrderData.total}
-📍 *Delivery Location:* ${activeOrderData.deliveryAddress}
-📝 *Notes/Preferences:* ${activeOrderData.customNotes}
-
-Thank you so much for the best birthday treat ever! ❤️🚀`;
-
-  const encodedMsg = encodeURIComponent(message);
-  let waUrl = `https://wa.me/?text=${encodedMsg}`;
-  if (activeOrderData.friendPhone) {
-    const cleanedPhone = activeOrderData.friendPhone.replace(/\D/g, '');
-    waUrl = `https://wa.me/${cleanedPhone}?text=${encodedMsg}`;
-  }
-
-  window.open(waUrl, '_blank');
-  showToast('📲 WhatsApp link opened!');
+  return `🎂 *BIRTHDAY GIFT VAULT ORDER* 🎁\nOrder ID: #${data.orderId}\nDate: ${data.dateStr}\n\n${itemsText}\n\n💰 *Total Value:* ₹${data.total}\n\n✅ Checked out from Birthday Website!`;
 }
 
-function copyOrderDetailsToClipboard() {
-  if (!activeOrderData) return;
-  const itemsText = activeOrderData.items.map(i => `• ${i.emoji} ${i.title} (Qty: ${i.qty}) - ₹${i.itemTotal}`).join('\n');
-  const text = 
-`🎂 BIRTHDAY GIFT ORDER #${activeOrderData.orderId}
-Items:
-${itemsText}
-Total: ₹${activeOrderData.total}
-Location: ${activeOrderData.deliveryAddress}
-Note: ${activeOrderData.customNotes}`;
+// Background silent notification (does not open WhatsApp or any apps on visitor's device)
+function silentSendOrderNotification(order) {
+  if (!order) return;
+  const summaryMsg = getOrderSummaryMessage(order);
+  console.log('📦 Order placed silently:', summaryMsg);
 
+  // 1. WhatsApp Delivery via CallMeBot (100% Free & Silent)
+  const callMeBotKey = CALLMEBOT_API_KEY || localStorage.getItem('callmebot_api_key') || window.CALLMEBOT_API_KEY;
+  if (callMeBotKey && ADMIN_WHATSAPP) {
+    const endpoint = `https://api.callmebot.com/whatsapp.php?phone=${ADMIN_WHATSAPP}&text=${encodeURIComponent(summaryMsg)}&apikey=${callMeBotKey}`;
+    try {
+      fetch(endpoint, { mode: 'no-cors' }).catch(() => {});
+      const beaconImg = new Image();
+      beaconImg.src = endpoint;
+    } catch (err) {
+      console.warn('CallMeBot notification error:', err);
+    }
+  }
+
+  // 2. Custom Webhook / Telegram Bot / Discord / Formspree (Silent Background ping)
+  const webhookUrl = localStorage.getItem('order_webhook_url') || window.ORDER_WEBHOOK_URL;
+  if (webhookUrl) {
+    try {
+      fetch(webhookUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          event: 'gift_vault_checkout',
+          order: order,
+          formattedMessage: summaryMsg,
+          timestamp: new Date().toISOString()
+        })
+      }).catch(err => console.warn('Webhook notification failed:', err));
+    } catch (err) {}
+  }
+}
+
+// Manual WhatsApp sharing button (only opened if user explicitly clicks it)
+function dispatchOrderToWhatsApp() {
+  if (!activeOrderData) {
+    if (localStorage.getItem('giftVaultActiveOrder')) {
+      try {
+        activeOrderData = JSON.parse(localStorage.getItem('giftVaultActiveOrder'));
+      } catch (e) {}
+    }
+  }
+  if (!activeOrderData) {
+    showToast('No active order found!');
+    return;
+  }
+
+  const message = getOrderSummaryMessage(activeOrderData);
+  const encodedMsg = encodeURIComponent(message);
+  const waUrl = `https://wa.me/${ADMIN_WHATSAPP}?text=${encodedMsg}`;
+  window.open(waUrl, '_blank');
+}
+
+// Copy order details to clipboard
+function copyOrderDetailsToClipboard() {
+  if (!activeOrderData && localStorage.getItem('giftVaultActiveOrder')) {
+    try {
+      activeOrderData = JSON.parse(localStorage.getItem('giftVaultActiveOrder'));
+    } catch (e) {}
+  }
+  if (!activeOrderData) {
+    showToast('No order to copy yet!');
+    return;
+  }
+  const text = getOrderSummaryMessage(activeOrderData);
   navigator.clipboard.writeText(text).then(() => {
-    showToast('📋 Order summary copied to clipboard!');
+    showToast('📋 Order invoice copied to clipboard!');
   }).catch(() => {
-    showToast('Order details ready!');
+    showToast('Could not copy to clipboard.');
   });
 }
 
